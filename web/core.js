@@ -1,31 +1,7 @@
 var app = angular.module('MainApp', []);
 
-app.factory('socket', function ($rootScope) {
-  var socket = io.connect();
-  return {
-    on: function (eventName, callback) {
-      socket.on(eventName, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          callback.apply(socket, args);
-        });
-      });
-    },
-    emit: function (eventName, data, callback) {
-      socket.emit(eventName, data, function () {
-        var args = arguments;
-        $rootScope.$apply(function () {
-          if (callback) {
-            callback.apply(socket, args);
-          }
-        });
-      })
-    }
-  };
-});
 
-
-function mainController($scope, $http, socket) {
+function mainController($scope, $http) {
 		$scope.newKey = {};
 		$scope.username = {};
 		$scope.keys = {};
@@ -39,16 +15,6 @@ function mainController($scope, $http, socket) {
     console.log(keys);
     console.log(keys.publicKey.n.toString());
 
-
-		socket.on('messages', function(data) {
-				console.log(data);
-		});
-
-		socket.on('user list', function(data) {
-				console.log(data);
-				$scope.users = [];
-				$scope.users.push(data.username);
-		});
 
 
 		$scope.setUsername = function() {

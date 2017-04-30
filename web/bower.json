@@ -1,0 +1,21 @@
+{
+  "name": "eVoting",
+  "homepage": "https://github.com/cities2-sec/eVoting",
+  "authors": [
+    "CITIES2"
+  ],
+  "description": "Proyecto de voto electrónico",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "boostrap#^3.3.7",
+    "font-awesome": "fontawesome#^4.7.0",
+    "jquery": "^3.2.1"
+  }
+}

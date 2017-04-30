@@ -1,7 +1,7 @@
 
 const ip = require("ip");
 module.exports = {
-    ip: process.env.OPENSHIFT_NODEJS_IP || process.env.IP || "localhost" || ip.address() ,
+    ip: process.env.OPENSHIFT_NODEJS_IP || process.env.IP || ip.address() || localhost,
     port: process.env.PORT || 8080,
     db: process.env.MONGODB || 'mongodb://localhost/evoting',
     SECRET_TOKEN: 'tokenproyect',
