@@ -3,6 +3,7 @@ const jwt = require('jwt-simple');
 const moment = require('moment');
 const mongoose = require('mongoose');
 const bignum = require('bignum');
+var secrets = require('secrets.js');
 
 /* Routes*/
 const config =require('../../config');
@@ -23,8 +24,7 @@ function createKeys(req) {
       else{
         console.log(`ERROR: Doesn't exist the keys for ${req} `);
 				var bitslength = config.bitslength;
-				keys = new rsa.generateKeys(bitslength);
-
+				var keys = new rsa.generateKeys(bitslength);
 				Keys.remove({keytype : req}, function(err, key) {
 					if (err)
 						res.send(err);
@@ -61,6 +61,17 @@ function createKeys(req) {
 			    })
 			}
 	})
+}
+
+function createSecretSharing(){
+	var bitslength = config.bitslength;
+	var keys = new rsa.generateKeys(bitslength);
+	var shares = secrets.share(keys.privateKey.p.toString(),4,3);
+ 	console.log("Share Sharing Keys\n"+ shares);
+	var comb = secrets.combine(shares.slice(0,3));
+	console.log(comb==keys.privateKey.p.toString());
+	var keys = null;
+
 }
 
 function createToken(user){
@@ -100,5 +111,6 @@ function decodeToken(token){
 module.exports = {
     createToken,
     decodeToken,
-    createKeys
+    createKeys,
+		createSecretSharing
 }

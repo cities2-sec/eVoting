@@ -13,6 +13,7 @@ const config = require('./config');
 const keys = require('./api_server/services')
 
 /* Connexion to Mongodb */
+mongoose.Promise = global.Promise;
 mongoose.connect(config.db, function (err, res) {
     if(err){
         return console.log(`ERROR: connecting to Database: ${err}`);
@@ -21,8 +22,8 @@ mongoose.connect(config.db, function (err, res) {
 
     //Creating Keys for Censo Urna and Mesaelectoral
     keys.createKeys("censo");
-    keys.createKeys("urna");
-    keys.createKeys("melectoral");
+    //keys.createKeys("urna");
+    keys.createSecretSharing("melectoral");
 
     /* Server listening for HTTP */
     app.listen(config.port, config.ip, function () {
