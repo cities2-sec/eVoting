@@ -20,6 +20,7 @@
     "angular": "^1.6.4",
     "big-integer": "^1.6.22",
     "angular-route": "^1.6.4",
-    "file-saver": "^1.3.3"
+    "file-saver": "^1.3.3",
+    "polymer": "Polymer/polymer#^1.9.1"
   }
 }
