@@ -25,15 +25,17 @@ const allowCrossDomain = function (req, res, next) {
     }
 };
 
-/* Routes location on API */
-const censo = require('./api_server/censo/routes/censo');
-
 /*const mesa = ;
 const urna = ;
 */
 
+const censo = require('./api_server/censo/routes/censo');
+const mesa = require ('./api_server/mesa_electoral/routes/pollingStation');
+const urna = require ('./api_server/urna/routes/ballotBox');
+
+
 /*
-* APpp
+* App
 * */
 app.use(allowCrossDomain);
 app.use(express.static(path.join(__dirname, 'web'))); // Static Web
@@ -43,11 +45,13 @@ app.use(bodyParser.json());
 
 
 /* Routes */
-app.use('/censo', censo)
+app.use('/censo', censo);
+app.use('/mesa', mesa);
+app.use('/urna', urna);
+
 
 app.get('/', function (err, res) {
-    res.send({message: 'Welcome to my api'});
+    res.send({message: 'Welcome to my API'});
 });
-
 
 module.exports = app;
