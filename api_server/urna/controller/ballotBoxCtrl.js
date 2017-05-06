@@ -2,10 +2,10 @@
  * Created by VictorMiranda on 03/02/2017.
  */
 
-const User = require('../model/SchemaUser');
+const BallotBox = require('../model/ballotBoxModel');
 const service = require('../../services');
 
-function logIn (req, res){
+/*function logIn (req, res){
     const user = new User({
         username: req.body.username,
         displayName: req.body.displayName,
@@ -18,9 +18,13 @@ function logIn (req, res){
         }
         return res.status(201).send({token: service.createToken(user)});
     })
+}*/
+
+function toVote(req, res){
+    return null;
 }
 
-function signIn(req, res) {
+/*function signIn(req, res) {
     User.find({ email: req.body.email }, function(err, user){
         if(err){
             return res.status(500).send({message:`${err}`});
@@ -36,14 +40,12 @@ function signIn(req, res) {
             });
         }
     })
-}
+}*/
 
-function authUser(req, res) {
+/*function authUser(req, res) {
     res.status(200).send({message: "You have access"})
-}
+}*/
 
 module.exports = {
-    logIn,
-    signIn,
-    authUser
-}
+    toVote
+};
