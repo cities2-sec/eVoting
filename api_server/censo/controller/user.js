@@ -5,7 +5,7 @@
 const User = require('../model/SchemaUser');
 const service = require('../../services');
 
-function logIn (req, res){
+function register(req, res){
     const user = new User({
         username: req.body.username,
         displayName: req.body.displayName,
@@ -20,7 +20,7 @@ function logIn (req, res){
     })
 }
 
-function signIn(req, res) {
+function login(req, res) {
     User.find({ email: req.body.email }, function(err, user){
         if(err){
             return res.status(500).send({message:`${err}`});
@@ -29,8 +29,8 @@ function signIn(req, res) {
             return res.status(484).send({message: "User doesn't exists"})
         }
         else{
-        req.user = user;
-            req.status(200).send({
+            req.user = user;
+            res.status(200).send({
                 message: "Login",
                 token: service.createToken(user)
             });
@@ -43,7 +43,7 @@ function authUser(req, res) {
 }
 
 module.exports = {
-    logIn,
-    signIn,
+    login,
+    register,
     authUser
 }

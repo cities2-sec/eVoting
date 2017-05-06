@@ -26,7 +26,7 @@ const allowCrossDomain = function (req, res, next) {
 };
 
 /* Routes location on API */
-const censo = require('./api_server/censo/routes/user');
+const censo = require('./api_server/censo/routes/censo');
 
 /*const mesa = ;
 const urna = ;

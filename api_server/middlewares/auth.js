@@ -5,19 +5,20 @@
 const services = require('../services');
 
 function isAuth(req, res, next) {
+
     if(!req.headers.authorization){
         return res.status(403).send({message: "ERROR: You are not allowed"});
     }
-    const token = req.headers.authorization.split(' ')[1];
-
+    const token = req.headers.authorization;
     services.decodeToken(token)
-    .then(function (response){
-            req.user = response
-            next()
+        .then(function (response) {
+            console.log("Auth ok");
+            req.user = response;
         })
-    .catch(function (response){
-        res.status(response.status)
+        .catch(function (response) {
+            res.status(response.status)
         })
+    next();
 }
 
 module.exports =  isAuth;
