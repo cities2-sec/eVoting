@@ -4,7 +4,7 @@
 
 angular.module('MainApp.login', ['ngMaterial'])
 
-    .controller('LoginCtrl', function ($scope, $mdDialog, $http, $window, $rootScope, $state) {
+    .controller('LoginCtrl', function ($scope, $mdDialog, $http, $window, $rootScope) {
         $scope.status = '  ';
         $scope.customFullscreen = false;
         $scope.showAdvanced = function (ev) {

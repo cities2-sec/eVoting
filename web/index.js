@@ -1,4 +1,4 @@
-angular.module('MainApp', ['ngRoute'])
+angular.module('MainApp', ['ngRoute', 'MainApp.login', 'ngMaterial'])
 
 .config(['$routeProvider', '$locationProvider', function ( $routeProvider, $locationProvider){
 	$routeProvider
