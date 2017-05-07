@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('Keys', {
+module.exports = mongoose.model('keysModel', {
 	keytype: {type: String, unique: true },
 	publicKey:{
 		e: String,

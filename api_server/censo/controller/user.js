@@ -20,7 +20,7 @@ function logIn (req, res){
     })
 }
 
-function signIn(req, res) {
+function signUp(req, res) {
     User.find({ email: req.body.email }, function(err, user){
         if(err){
             return res.status(500).send({message:`${err}`});
@@ -44,6 +44,6 @@ function authUser(req, res) {
 
 module.exports = {
     logIn,
-    signIn,
+    signUp,
     authUser
 }

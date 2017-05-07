@@ -1,0 +1,37 @@
+<md-dialog aria-label="Inicia sessió" ng-controller="LoginCtrl">
+    <form name="Login" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Inicia sessió</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon style="width: 24px; height: 24px" md-svg-src="../img/ic_close_24px.svg"
+                             aria-label="Tanca"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img style="margin: auto; max-width: 100%;" alt="Password" src="../img/dialog-password.svg">
+                    </div>
+                    <div class="col-md-8">
+                        <md-input-container class="md-block">
+                            <label>Correu electrònic</label>
+                            <input ng-model="actualUser.email" type="email" required>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Contrasenya</label>
+                            <input ng-model="actualUser.password" type="password" required>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-disabled="Login.$invalid" ng-click="login()" class="md-raised md-primary">Entra</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

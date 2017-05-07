@@ -8,7 +8,7 @@ const auth = require('../../middlewares/auth');
 const api = express.Router();
 
 api.post('/logIn', userCtrl.logIn);
-api.post('/singIn', userCtrl.signIn);
+api.post('/singIn', userCtrl.signUp);
 api.get('/private', auth, userCtrl.authUser);
 
 module.exports = api;
