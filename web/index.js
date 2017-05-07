@@ -1,4 +1,4 @@
-angular.module('MainApp', ['ngRoute'])
+angular.module('MainApp', ['ngRoute','MainApp.login', 'ngMaterial'])
 
 .config(['$routeProvider', '$locationProvider', function ( $routeProvider, $locationProvider){
 	$routeProvider
@@ -31,9 +31,9 @@ angular.module('MainApp', ['ngRoute'])
 		var username;
 
 
-    var keys = rsa.generateKeys(512);
-    console.log(keys);
-    console.log(keys.publicKey.n.toString());
+    	var keys = rsa.generateKeys(512);
+    	console.log(keys);
+    	console.log(keys.publicKey.n.toString());
 
 
 		var a = [];
@@ -42,13 +42,13 @@ angular.module('MainApp', ['ngRoute'])
 		while((s = s.substring(47,s.length)) != "");
 		var text = a.toString().split(",").join("\n");
 
-		var blob = new Blob([
+		/*var blob = new Blob([
 			"------------------PRIVATE KEY------------------\n\n"
 			+text+
 			"\n\n-----------------------------------------------"
 		],
 		{type: "text/plain;charset=utf-8"});
-		saveAs(blob, "testfile.txt");
+		saveAs(blob, "testfile.txt");*/
 
 
 		$scope.setUsername = function() {
