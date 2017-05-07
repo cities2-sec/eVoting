@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand">RSA Client</a>
+            <form class="navbar-form navbar-left">
+                <span class="title">Who are you?</span>
+                <input ng-model="username.text" type="text" maxlength="14"/>
+                <button class="btn btn-success" title="Public Key from Server" ng-click="setUsername()">Enter
+                </button>
+            </form>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form class="navbar-form navbar-right">
+                <div class="text">I <span class="love" style="color:#ff6032">♥</span> eVoting</div>
+            </form>
+        </div>
+    </div>
+</nav>

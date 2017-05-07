@@ -1,6 +1,3 @@
-<!doctype html>
-
-<!-- ASSIGN OUR ANGULAR MODULE -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -17,7 +14,7 @@
 
     <div ng-include="'views/header/header.html'"></div>
     <div class="row">
-        <div class="panel panel-primary" ng-controller="LoginCtrl">
+        <div class="panel panel-primary">
             <!-- Default panel contents -->
             <div class="panel-heading">Encrypt and Decrypt</div>
             <div class="panel-body">
@@ -33,9 +30,11 @@
                                 ng-disabled="myForm.$invalid || selected">Enviar
                         </button>
                     </form>
-                <md-button href="#" ng-click="showAdvanced($event)" aria-label="Inicia sessió">
-                    Inicia sessió
-                </md-button>
+                <div ng-controller="LoginCtrl">
+                    <md-button href="#" ng-click="showAdvanced($event)" aria-label="Inicia sessió">
+                        Inicia sessió
+                    </md-button>
+                </div>
                 </div>
                 </p>
             </div>
@@ -83,6 +82,5 @@
 <script src="views/starter/starter.js"></script>
 <script src="views/success/success.js"></script>
 <script src="views/vote/vote.js"></script>
-
 </body>
 </html>
