@@ -33,7 +33,6 @@ mongoose.connect(config.db, function (err, res) {
     });
 
     try{
-
       var privateKey  = fs.readFileSync('cert/mysitename.key', 'utf8');
       var certificate = fs.readFileSync('cert/mysitename.crt', 'utf8');
       var credentials = {key: privateKey, cert: certificate};
