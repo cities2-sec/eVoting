@@ -1,4 +1,4 @@
-angular.module('MainApp', ['ngRoute', 'MainApp.login', 'ngMaterial'])
+angular.module('MainApp', ['ngRoute'])
 
 .config(['$routeProvider', '$locationProvider', function ( $routeProvider, $locationProvider){
 	$routeProvider
@@ -14,7 +14,6 @@ angular.module('MainApp', ['ngRoute', 'MainApp.login', 'ngMaterial'])
 		templateUrl: '',
 		controller: 'urnaController'
 	})
-
 	.when('/melectoral', {
 		templateUrl: '',
 		controller: 'melectoralController'

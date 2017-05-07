@@ -3,7 +3,7 @@ const jwt = require('jwt-simple');
 const moment = require('moment');
 const mongoose = require('mongoose');
 const bignum = require('bignum');
-var secrets = require('secrets.js');
+const secrets = require('secrets.js');
 
 /* Routes*/
 const config =require('../../config');
@@ -65,11 +65,14 @@ function createKeys(req) {
 
 function createSecretSharing(){
 	var bitslength = config.bitslength;
+	console.log("\n*************PRUEBA SHARING KEYS*************");
 	var keys = new rsa.generateKeys(bitslength);
 	var shares = secrets.share(keys.privateKey.p.toString(),4,3);
  	console.log("Share Sharing Keys\n"+ shares);
 	var comb = secrets.combine(shares.slice(0,3));
-	console.log(comb==keys.privateKey.p.toString());
+	console.log("The combination of 3 of 4 is correct?");
+	console.log( comb==keys.privateKey.p.toString());
+	console.log("*********************************************\n");
 	var keys = null;
 
 }

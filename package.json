@@ -2,14 +2,14 @@
   "name": "eVoting",
   "version": "0.1.0",
   "author": "CITIE2",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "description": "Proyecto de voto electrónico",
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",
     "postinstall": "bower install",
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test expecified\" && exit 1"
+    "test": "nodemon index.js"
   },
   "keywords": [
     "rsa",
@@ -34,7 +34,6 @@
     "secrets.js": "^0.1.8"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "bower": ""
+    "nodemon": "^1.11.0"
   }
 }

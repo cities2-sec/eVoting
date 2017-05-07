@@ -1,6 +1,8 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const schema = mongoose.Schema;
 
-module.exports = mongoose.model('keysModel', {
+//Esquema de las claves privadas y publicas Solo para el censo electoral de momento
+const KeysSchema =  new schema({
 	keytype: {type: String, unique: true },
 	publicKey:{
 		e: String,
@@ -19,3 +21,5 @@ module.exports = mongoose.model('keysModel', {
 		}
 	}
 });
+
+module.exports = mongoose.model('Keys', KeysSchema);
