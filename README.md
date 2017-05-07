@@ -14,6 +14,14 @@ Install mongod (v. 2.6.10)
 On Ubuntu:
 sudo service mongodb start
 
+ACTUALIZADO:
+TEST MODE: (Doesn't install nodemodules and bowercomponents)
+	npm test
+RUN MODE: (Install automatically bowercomponents and nodemodules)
+	npm start
+
+
+
 root folder:
 - $ npm install
 web folder:
