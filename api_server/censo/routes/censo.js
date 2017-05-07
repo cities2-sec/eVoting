@@ -4,11 +4,14 @@
 
 const express = require('express');
 const userCtrl = require ('../controller/user');
+const identityCtrl = require ('../controller/identity');
 const auth = require('../../middlewares/auth');
 const api = express.Router();
 
-api.post('/logIn', userCtrl.logIn);
-api.post('/singIn', userCtrl.signUp);
+api.post('/login', userCtrl.login);
+api.post('/signin', userCtrl.register);
 api.get('/private', auth, userCtrl.authUser);
+
+api.post('/identity/request', auth, identityCtrl.identityRequest);
 
 module.exports = api;

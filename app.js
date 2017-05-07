@@ -25,10 +25,14 @@ const allowCrossDomain = function (req, res, next) {
     }
 };
 
-/* Routes location on API */
-const censo = require('./api_server/censo/routes/user');
+/*const mesa = ;
+const urna = ;
+*/
+
+const censo = require('./api_server/censo/routes/censo');
 const mesa = require ('./api_server/mesa_electoral/routes/pollingStation');
 const urna = require ('./api_server/urna/routes/ballotBox');
+
 
 /*
 * App

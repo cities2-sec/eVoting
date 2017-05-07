@@ -17,7 +17,9 @@ const UserSchema =  new schema({
     password: { type: String, select: false },
     avatar: String,
     signUpdate: { type: Date, default: Date.now() },
-    lastlogin: Date
+    lastlogin: Date,
+    // Fecha en la que se le firmó su identidad anónima
+    identityGivenDate: Date
 });
 
 UserSchema.pre('save', function (next){
