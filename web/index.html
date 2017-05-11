@@ -20,6 +20,9 @@
 	<script src="/bower_components/big-integer/BigInteger.min.js"></script>				<!-- BigInteger -->
 	<script src="/bower_components/file-saver/FileSaver.min.js"></script>				<!-- File Saver -->
 
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src="/bower_components/angular-notify/dist/angular-notify.js"></script>
+
 	<!-- Own scripts -->
 	<script src="/scripts/big-integer-extended.js" type="text/javascript"></script>
 	<script src="/scripts/rsa-big-integer.js" type="text/javascript"></script>
@@ -27,11 +30,16 @@
 	<!-- WEB Desing -->
 	<link rel="stylesheet" href="/css/index.css">
 	<script src="index.js"></script>
+
 </head>
+<base href="/">
 
 <body ng-controller="mainController">
 
+
+
 	<div id="contenedor" class="container">
+		<div notifybar style="position:absolute;top:0;right:0"></div>
 
 <!-- NAV BAR -->
 		<nav id="cabecera" class="navbar navbar-default">
@@ -41,25 +49,63 @@
 				</div>
 		</nav>
 
-		<div ng-view> </div>
-<!-- Botons -->
-		<div class="row">
+<!-- Botons
 
+		<div idclass="row">
 			<div class="col-md-4 text-center">
-				<button id="censo" type="button" class="btn" href="#censo"></i></button>
+				<button id="censo" type="button" class="btn_index" href="#censo"></i></button>
 				<p> CENSO ELECTORAL </p>
 			</div>
 			<div class="col-md-4 text-center">
-				<button id="urna" type="button" class="btn"  href="urna.html"></i></button>
+				<button id="urna" type="button" class="btn_index"  href="urna.html"></i></button>
 				<p> URNA </p>
 			</div>
 			<div class="col-md-4 text-center">
-				<button id="mesa_electoral" type="button" class="btn"  href="melectoral.html"></button>
+				<button id="mesa_electoral" type="button" class="btn_index"  href="melectoral.html"></button>
 				<p> MESA ELECTORAL </p>
 			</div>
+		</div>
 
+ Botons -->
+
+		<div class="row">
+			<div class="panel panel-primary">
+				<!-- Default panel contents -->
+				<div class="panel-heading">Censo</div>
+				<div class="panel-body">
+					<p>
+					<div class="col-sm-6 col-sm-offset-1 text-center">
+						<button type="submit" class="btn btn-success btn-lg" ng-click="getCensoKeys()" >PedirClaves</button>
+						<button type="submit" class="btn btn-warning btn-lg" ng-click="createOurKey()">Crear Claves</button>
+						<button type="submit" class="btn btn-danger btn-lg" ng-click="getAnonimID()">Id Anonima</button>
+					</div>
+								<div class="col-sm-4 col-sm-offset-1 text-center">
+							<form name="myForm">
+								<div class="form-group">
+									<input type="text" class="form-control input-lg text-center" placeholder="Text" ng-model="newKey.text" required>
+									<br>
+								</div>
+								<button type="submit" class="btn btn-success btn-lg" ng-click="enviartexto()" ng-disabled="myForm.$invalid || selected">Enviar</button>
+								</form>
+						</div>
+					</p>
+				</div>
+			</div>
+		<div class="panel panel-success">
+			<!-- Default panel contents -->
+			<div class="panel-heading">No repudio</div>
+
+			<div class="col-sm-6 col-sm-offset-1">
+				<table class="table table-striped">
+					<tr ng-repeat="user in users" >
+						<td>{{ user }}</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
+
+
 
 </body>
 </html>

@@ -13,53 +13,52 @@ const rsa = require('../module/rsa');
 
 function createKeys(req) {
 	Keys.findOne({ keytype: req } , function (err, key){
-        if(err) {
-            console.log(`ERROR: Petitions doesn't do: ${err}`);
-            return;
-        }
-        if(key){
-            console.log(`Keys existed for ${req} `);
-            return;
-        }
-      else{
-        console.log(`ERROR: Doesn't exist the keys for ${req} `);
-				var bitslength = config.bitslength;
-				var keys = new rsa.generateKeys(bitslength);
-				Keys.remove({keytype : req}, function(err, key) {
-					if (err)
-						res.send(err);
-					});
-
+		if(err) {
+          console.log(`ERROR: Petitions doesn't do: ${err}`);
+          return;
+      }
+      if(key){
+          console.log(`Keys existed for ${req} `);
+          return;
+      }
+    else{
+      console.log(`ERROR: Doesn't exist the keys for ${req} `);
+			var bitslength = config.bitslength;
+			var keys = new rsa.generateKeys(bitslength);
+			Keys.remove({keytype : req}, function(err, key) {
+				if (err)
+					res.send(err);
+				});
 				var key = new Keys({
-          keytype: req,
-          publicKey:{
-          	e:  keys.publicKey.e,
-          	n: keys.publicKey.n,
-          	bits:  keys.publicKey.bits,
-          },
-          privateKey:{
-          	p: keys.privateKey.p,
-          	q: keys.privateKey.q,
-          	d: keys.privateKey.d,
-          	phi: keys.privateKey.phi,
-          	publicKey : {
-              e:  keys.publicKey.e,
-          		n: keys.publicKey.n,
-          		bits:  keys.publicKey.bits
-            }
+        keytype: req,
+        publicKey:{
+        	e:  keys.publicKey.e,
+        	n: keys.publicKey.n,
+        	bits:  keys.publicKey.bits,
+        },
+        privateKey:{
+        	p: keys.privateKey.p,
+        	q: keys.privateKey.q,
+        	d: keys.privateKey.d,
+        	phi: keys.privateKey.phi,
+        	publicKey : {
+            e:  keys.publicKey.e,
+        		n: keys.publicKey.n,
+        		bits:  keys.publicKey.bits
           }
-		    });
-			    key.save(function (err, KeyStored) {
-			        if(err) {
-			            console.log(`ERROR: Not saved in Database: ${err}`);
-                  return;
-			        }
-			        else {
-			            console.log(`Stored the keys for ${req}`);
-                  return;
-			        }
-			    })
-			}
+        }
+	    });
+			key.save(function (err, KeyStored) {
+		       if(err) {
+		           console.log(`ERROR: Not saved in Database: ${err}`);
+              return;
+		       }
+		       else {
+		           console.log(`Stored the keys for ${req}`);
+              return;
+		       }
+		   })
+		}
 	})
 }
 

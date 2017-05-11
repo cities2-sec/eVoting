@@ -29,7 +29,7 @@ var rsa = {
 
         keys.publicKey = new rsa.publicKey(this.bitlength, n, e);
         keys.privateKey = new rsa.privateKey(p, q, d, keys.publicKey);
-        console.log(keys.privateKey);
+        //console.log(keys.privateKey);
         return keys;
     }
 };
