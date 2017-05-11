@@ -14,7 +14,8 @@ function register(req, res){
     });
     user.save(function (err) {
         if(err) {
-            return res.status(500).send({message: `ERROR: User not created: ${err}`});
+            console.log(err);
+            return res.status(500).send("Server error");
         }
         return res.status(201).send({token: service.createToken(user)});
     })
@@ -42,8 +43,38 @@ function authUser(req, res) {
     res.status(200).send({message: "You have access"})
 }
 
+function censoStats(req, res) {
+    // Devuelve información sobre el estado de las votaciones
+    var censo = 0; // Nº de usuarios en el censo
+    var usersWithIdentity = 0; // Nº de usuarios que han solicitado identidad anonima
+
+    User.find({
+        identityGivenDate: { $ne: null }
+    }, function(err, users) {
+        if(err) {
+            console.log(err);
+            return res.status(500).json("Server error");
+        }
+        usersWithIdentity = users.length;
+        User.find().count(function(err, count) {
+            if(err) {
+                console.log(err);
+                return res.status(500).json("Server error");
+            }
+            censo = count;
+            var msg = {
+                "censo": censo,
+                "usersWithIdentity": usersWithIdentity
+            }
+            res.status(200).json(msg);
+        });
+    });
+
+}
+
 module.exports = {
     login,
     register,
-    authUser
+    authUser,
+    censoStats
 }

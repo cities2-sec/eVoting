@@ -11,6 +11,7 @@ const api = express.Router();
 api.post('/login', userCtrl.login);
 api.post('/signin', userCtrl.register);
 api.get('/private', auth, userCtrl.authUser);
+api.get('/stats', userCtrl.censoStats);
 
 api.post('/identity/request', auth, identityCtrl.identityRequest);
 
