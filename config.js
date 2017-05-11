@@ -5,5 +5,5 @@ module.exports = {
     secure_port : 8443,
     db: process.env.MONGODB || 'mongodb://localhost/evoting',
     SECRET_TOKEN: 'tokenproyect',
-    bitslength : 128 || 1024 || 2048 // It must be more than 1028 o equal at least
+    bitslength : process.env.bitslength || 1024 || 2048 // It must be more than 1028 o equal at least in testmode 128
 }

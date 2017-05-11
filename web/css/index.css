@@ -1,6 +1,33 @@
+#contenedor{
+  padding-top: 10px;
+}
+#cabecera{
+  background-color: rgb(187,232,99);
+}
+
 #footer {
   padding-bottom: 0px;
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+
+#censo {
+  background-image: url('/img/censo.jpg');
+}
+#urna {
+  background-image: url('/img/urna.jpg');
+}
+#mesa_electoral {
+  background-image: url('/img/mesaelectoral.jpg');
+}
+.btn{
+  background-size: 200px 200px;
+  height: 200px;
+  width: 200px;
+  border-radius: 100px;
+}
+
+.navbar-brand{
+    color: white;
 }

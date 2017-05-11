@@ -1,4 +1,4 @@
-angular.module('MainApp', ['ngRoute'])
+angular.module('MainApp', ['ngRoute', 'MainApp.login', 'ngMaterial'])
 
 .config(['$routeProvider', '$locationProvider', function ( $routeProvider, $locationProvider){
 	$routeProvider
@@ -21,8 +21,7 @@ angular.module('MainApp', ['ngRoute'])
 	})
 }])
 
-
-app.controller('mainController',function ($scope, $http) {
+.controller('mainController',function ($scope, $http) {
 		$scope.newKey = {};
 		$scope.username = {};
 		$scope.keys = {};
@@ -68,10 +67,8 @@ app.controller('mainController',function ($scope, $http) {
 		/*$http.get('/api/keys').success(function(data) {
 			$scope.keys = data;
 			console.log(data);
-
 			n = bigInt(data[0].n);
 		  e = bigInt(data[0].e);
-
 			$(function(){
 				$('[data-toggle="popover"]').popover({
 					container:'body'
