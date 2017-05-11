@@ -12,15 +12,15 @@ const rsa = require('../module/rsa');
 
 
 function createKeys(req) {
-	Keys.find({ keytype: req } , function (err, key){
-			if(err) {
-				console.log(`ERROR: Petitions doesn't do: ${err}`);
-        return;
-			}
-			if(key){
-        console.log(`Keys existed for ${req} `);
-        return;
-      }
+	Keys.findOne({ keytype: req } , function (err, key){
+        if(err) {
+            console.log(`ERROR: Petitions doesn't do: ${err}`);
+            return;
+        }
+        if(key){
+            console.log(`Keys existed for ${req} `);
+            return;
+        }
       else{
         console.log(`ERROR: Doesn't exist the keys for ${req} `);
 				var bitslength = config.bitslength;
