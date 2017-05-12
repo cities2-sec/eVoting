@@ -5,6 +5,13 @@
 const PollingStation = require('../model/pollingStationModel');
 const service = require('../../services');
 
+
+
+function getKeys (req, res) {
+
+    return res.json({keys: global.PollingStationKey});
+}
+
 /*function logIn (req, res){
     const user = new User({
         username: req.body.username,
@@ -19,11 +26,6 @@ const service = require('../../services');
         return res.status(201).send({token: service.createToken(user)});
     })
 }*/
-
-function getKeys(res) {
-    //res.json({success: true});
-    res.json({keys: service.PollingStationKey});
-}
 
 /*function signIn(req, res) {
     User.find({ email: req.body.email }, function(err, user){
