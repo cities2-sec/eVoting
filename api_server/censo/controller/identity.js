@@ -8,17 +8,15 @@ function identityRequest(req, res) {
     var body = req.body;
     if(!body.msgid || !body.msg) {
         // no vale
-        return res.status(400).send("No msgid or msg");
+        return res.status(400).json("No msgid or msg");
     }
-    console.log("Req user: "+req.user);
-
     switch(body.msgid) {
-        case 0:
+        case 1:
             // Si es el primer mensaje, el censo revisa que no se le haya dado ya una identidad anonima
             if(req.user.identityGivenDate) {
-                // Al usuario ya se la ha dado una identidad anonima
                 return res.status(403).json("You already have an anonymous identity");
             }
+
             // Firmar identidad
 
             // Obtener keys de la BD
@@ -49,7 +47,7 @@ function identityRequest(req, res) {
                             // Ha salido bien, enviamos la identidad firmada
                             // *** De momento no hacemos no repudio
                             //TODO: no repudio
-                            res.send(200).json(signedMsg);
+                            res.status(200).json(signedMsg);
                     });
 
                 }
@@ -59,9 +57,11 @@ function identityRequest(req, res) {
             });
 
             break;
-        case 1:
-            break;
         case 2:
+            res.status(501).json();
+            break;
+        case 3:
+            res.status(501).json();
             break;
         default:
             res.status(400).json("Unrecognized msg id");

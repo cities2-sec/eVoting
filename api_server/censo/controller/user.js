@@ -22,20 +22,23 @@ function register(req, res){
 }
 
 function login(req, res) {
-    User.find({ email: req.body.email }, function(err, user){
+    if(!req.body.username || !req.body.password) {
+        return res.status(400).json("No username or password");
+    }
+    User.findOne({ username: req.body.username }, function(err, user){
         if(err){
-            return res.status(500).send({message:`${err}`});
+            return res.status(500).json("Server error: "+err);
         }
         if (!user){
             return res.status(484).send({message: "User doesn't exists"})
         }
-        else{
-            req.user = user;
-            res.status(200).send({
-                message: "Login",
-                token: service.createToken(user)
-            });
-        }
+
+        // TODO: comprobar contraseña
+        res.status(200).send({
+            message: "Login",
+            token: service.createToken(user)
+        });
+
     })
 }
 
