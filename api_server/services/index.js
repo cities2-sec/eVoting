@@ -59,7 +59,6 @@ function createKeys(req) {
             })
         }
     })
->>>>>>> cc6914c008fe1fc7d184a423ce501329457d9a56
 }
 var PollingStationKey = {};
 
