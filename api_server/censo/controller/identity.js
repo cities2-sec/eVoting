@@ -2,6 +2,7 @@ const rsa = require('../../module/rsa');
 const User = require('../model/SchemaUser');
 const mongoose = require('mongoose');
 const Keys = require('../../model/SchemaKeys');
+var bignum = require('bignum');
 
 
 function identityRequest(req, res) {
@@ -80,14 +81,14 @@ function identityRequest2(req, res) {
       return res.status(404).send({message: `Error on the petition: ${err}`});
     }*/
     else{
-      var id = req.body.value.toString();
+
+      var publicKey = new rsa.publicKey(key.publicKey.bits, key.publicKey.n, key.publicKey.e);
+      var privateKey = new rsa.privateKey(key.privateKey.p, key.privateKey.q, key.privateKey.d, key.privateKey.phi, publicKey);
+
+      var id = req.body.id;
       console.log(id);
-
-      /*var signedMsg = req.body.value.toString().powm(key.privateKey.d, key.publicKey.n);
-        res.status(200).send({ sign: signedMsg })
-
-      res.status(200).send({publicKey : key.publicKey});
-      */
+      var signedMsg = privateKey.sign(id);
+      res.status(200).send({ sign: signedMsg })
     }
   })
 
