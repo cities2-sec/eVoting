@@ -163,7 +163,7 @@ function decodeToken(token) {
                 message: "Invalid Token"
             })
         }
-    })
+    });
     return decoded;
 }
 
