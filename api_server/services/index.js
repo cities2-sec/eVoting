@@ -48,6 +48,7 @@ function createKeys(req) {
           }
         }
 	    });
+			censoKeys = keys;
 			key.save(function (err, KeyStored) {
 		       if(err) {
 		           console.log(`ERROR: Not saved in Database: ${err}`);

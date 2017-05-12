@@ -16,6 +16,9 @@ api.get('/stats', userCtrl.censoStats);
 
 api.post('/identity/request', auth, identityCtrl.identityRequest);
 
+//PRUEBAS
+api.post('/identity/request2', identityCtrl.identityRequest2);
+
 api.get('/key', keyCtrl.getKey);
 
 
