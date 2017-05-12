@@ -20,8 +20,9 @@ const service = require('../../services');
     })
 }*/
 
-function getKeys(req, res) {
-    return null;
+function getKeys(res) {
+    //res.json({success: true});
+    res.json({keys: service.PollingStationKey});
 }
 
 /*function signIn(req, res) {

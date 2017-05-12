@@ -25,7 +25,8 @@ mongoose.connect(config.db, function (err, res) {
     /* CREATING KEYS */
     keys.createKeys("censo");
     //keys.createKeys("urna");
-    keys.createSecretSharing("melectoral");
+    //keys.createSecretSharing("melectoral");
+    keys.createPollingStationKey();
 
     /* Server listening for HTTP */
     app.listen(config.port, config.ip, function () {
@@ -38,7 +39,7 @@ mongoose.connect(config.db, function (err, res) {
       var credentials = {key: privateKey, cert: certificate};
       var httpsServer = https.createServer(credentials, app);
 
-      /* Server listening for HTTP */
+      /* Server listening for HTTPS */
       httpsServer.listen(config.secure_port, function () {
           console.log(`Running server on https://${config.ip}:${config.secure_port}`);
       });

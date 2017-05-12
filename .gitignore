@@ -2,6 +2,8 @@
 cert/*
 # Bower
 web/bower_components/*
+#INFO
+Info_files/*
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs
