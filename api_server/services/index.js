@@ -1,4 +1,3 @@
-
 const jwt = require('jwt-simple');
 const moment = require('moment');
 const mongoose = require('mongoose');
@@ -6,77 +5,135 @@ const bignum = require('bignum');
 const secrets = require('secrets.js');
 
 /* Routes*/
-const config =require('../../config');
+const config = require('../../config');
 const Keys = require('../model/SchemaKeys');
 const rsa = require('../module/rsa');
 
-
 function createKeys(req) {
-	Keys.findOne({ keytype: req } , function (err, key){
-		if(err) {
-          console.log(`ERROR: Petitions doesn't do: ${err}`);
-          return;
-      }
-      if(key){
-          console.log(`Keys existed for ${req} `);
-          return;
-      }
-    else{
-      console.log(`ERROR: Doesn't exist the keys for ${req} `);
-			var bitslength = config.bitslength;
-			var keys = new rsa.generateKeys(bitslength);
-			Keys.remove({keytype : req}, function(err, key) {
-				if (err)
-					res.send(err);
-				});
-				var key = new Keys({
-        keytype: req,
-        publicKey:{
-        	e:  keys.publicKey.e,
-        	n: keys.publicKey.n,
-        	bits:  keys.publicKey.bits,
-        },
-        privateKey:{
-        	p: keys.privateKey.p,
-        	q: keys.privateKey.q,
-        	d: keys.privateKey.d,
-        	phi: keys.privateKey.phi,
-        	publicKey : {
-            e:  keys.publicKey.e,
-        		n: keys.publicKey.n,
-        		bits:  keys.publicKey.bits
-          }
+    /* CENSO */
+    Keys.findOne({keytype: req}, function (err, key) {
+        if (err) {
+            console.log(`ERROR: Petitions doesn't do: ${err}`);
+            return;
         }
-	    });
-			key.save(function (err, KeyStored) {
-		       if(err) {
-		           console.log(`ERROR: Not saved in Database: ${err}`);
-              return;
-		       }
-		       else {
-		           console.log(`Stored the keys for ${req}`);
-              return;
-		       }
-		   })
-		}
-	})
+        if (key) {
+            console.log(`Keys existed for ${req} `);
+            return;
+        }
+        else {
+            console.log(`ERROR: Doesn't exist the keys for ${req} `);
+            var bitslength = config.bitslength;
+            var keys = new rsa.generateKeys(bitslength);
+            Keys.remove({keytype: req}, function (err, key) {
+                if (err)
+                    res.send(err);
+            });
+            var key = new Keys({
+                keytype: req,
+                publicKey: {
+                    e: keys.publicKey.e,
+                    n: keys.publicKey.n,
+                    bits: keys.publicKey.bits,
+                },
+                privateKey: {
+                    p: keys.privateKey.p,
+                    q: keys.privateKey.q,
+                    d: keys.privateKey.d,
+                    phi: keys.privateKey.phi,
+                    publicKey: {
+                        e: keys.publicKey.e,
+                        n: keys.publicKey.n,
+                        bits: keys.publicKey.bits
+                    }
+                }
+            });
+            key.save(function (err, KeyStored) {
+                if (err) {
+                    console.log(`ERROR: Not saved in Database: ${err}`);
+                    return;
+                }
+                else {
+                    console.log(`Stored the keys for ${req}`);
+                    return;
+                }
+            })
+        }
+    })
+}
+var PollingStationKey = {};
+
+function createPollingStationKey() {
+    var req = "mesa";
+    var key={};
+    Keys.findOne({keytype: req}, function (err, clave) {
+        if (err) {
+            console.log(`ERROR: Petitions doesn't do: ${err}`);
+            return err;
+        }
+        if (clave) {
+            console.log(`Keys existed for ${req} `);
+            return clave;
+        }
+        else {
+            console.log(`ERROR: Doesn't exist the keys for ${req} `);
+            var bitslength = config.bitslength;
+            var keys = new rsa.generateKeys(bitslength);
+            createSecretSharing(keys);
+            Keys.remove({keytype: req}, function (err) {
+                if (err)
+                    res.send(err);
+            });
+            key = new Keys({
+                keytype: req,
+                publicKey: {
+                    e: keys.publicKey.e,
+                    n: keys.publicKey.n,
+                    bits: keys.publicKey.bits,
+                }/*,
+                privateKey: {
+                    p: keys.privateKey.p,
+                    q: keys.privateKey.q,
+                    d: keys.privateKey.d,
+                    phi: keys.privateKey.phi,
+                    publicKey: {
+                        e: keys.publicKey.e,
+                        n: keys.publicKey.n,
+                        bits: keys.publicKey.bits
+                    }
+                }*/
+            });
+            key.save(function (err) {
+                if (err) {
+                    console.log(`ERROR: Not saved in Database: ${err}`);
+                    return;
+                }
+                else {
+                    console.log(`Stored the keys for ${req}`);
+                    return;
+                }
+            })
+        }
+    });
+    PollingStationKey = key;
+    return key;
 }
 
-function createSecretSharing(){
-	var bitslength = config.bitslength;
-	console.log("\n*************PRUEBA SHARING KEYS*************");
-	var keys = new rsa.generateKeys(bitslength);
-	var shares = secrets.share(keys.privateKey.p.toString(),4,3);
- 	console.log("Share Sharing Keys\n"+ shares);
-	var comb = secrets.combine(shares.slice(0,3));
-	console.log("The combination of 3 of 4 is correct?");
-	console.log( comb==keys.privateKey.p.toString());
-	console.log("*********************************************\n");
-	var keys = null;
+function createSecretSharing(clave) {
+    /* MESA */
+    //var bitslength = config.bitslength;
+    console.log("\n*************PRUEBA SHARING KEYS*************");
+    //var keys = new rsa.generateKeys(bitslength);
+    var shares = secrets.share(clave.privateKey.p.toString(), 4, 3);
+    console.log("Share Sharing Keys\n" + shares);
+    var comb = secrets.combine(shares.slice(0, 3));
+    console.log("The combination of 3 of 4 is correct?");
+    console.log(comb == clave.privateKey.p.toString());
+    console.log("*********************************************\n");
+    //const clave = null;
 
 }
 
-function createToken(user){
+function createToken(user) {
     console.log("Create Token for " + user.username);
     const payload = {
         sub: user._id,
@@ -87,20 +144,20 @@ function createToken(user){
 
 }
 
-function decodeToken(token){
-    const decoded = new Promise(function (resolve, reject){
-        try{
+function decodeToken(token) {
+    const decoded = new Promise(function (resolve, reject) {
+        try {
             payload = jwt.decode(token, config.SECRET_TOKEN)
 
-            if(payload.exp <= moment().unix()){
+            if (payload.exp <= moment().unix()) {
                 resolve({
                     status: 401,
                     message: "Token expired"
                 })
             }
-            resolve (payload.status);
+            resolve(payload.status);
         }
-        catch(err){
+        catch (err) {
             reject({
                 status: 500,
                 message: "Invalid Token"
@@ -114,5 +171,6 @@ module.exports = {
     createToken,
     decodeToken,
     createKeys,
-		createSecretSharing
+    createPollingStationKey,
+    PollingStationKey
 }

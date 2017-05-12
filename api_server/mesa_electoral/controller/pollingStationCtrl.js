@@ -4,6 +4,7 @@
 
 const PollingStation = require('../model/pollingStationModel');
 const service = require('../../services');
+import {PollingStationKey} from "../../services/index";
 
 /*function logIn (req, res){
     const user = new User({
@@ -20,8 +21,9 @@ const service = require('../../services');
     })
 }*/
 
-function getKeys(req, res) {
-    return null;
+function getKeys(res) {
+    //res.json({success: true});
+    res.json({keys: PollingStationKey});
 }
 
 /*function signIn(req, res) {

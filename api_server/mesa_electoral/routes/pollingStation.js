@@ -4,7 +4,6 @@
 
 const express = require('express');
 const pollingStation = require ('../controller/pollingStationCtrl');
-//const auth = require('../../middlewares/auth');
 const api = express.Router();
 
 //api.post('/logIn', userCtrl.logIn);
