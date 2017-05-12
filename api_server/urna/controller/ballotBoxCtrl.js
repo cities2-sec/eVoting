@@ -24,6 +24,10 @@ function toVote(req, res){
     return null;
 }
 
+function openBox (req, res){
+    return null;
+}
+
 /*function signIn(req, res) {
     User.find({ email: req.body.email }, function(err, user){
         if(err){
@@ -47,5 +51,6 @@ function toVote(req, res){
 }*/
 
 module.exports = {
-    toVote
+    toVote,
+    openBox
 };

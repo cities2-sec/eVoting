@@ -8,8 +8,17 @@ const service = require('../../services');
 
 
 function getKeys (req, res) {
-
     return res.json({keys: global.PollingStationKey});
+}
+
+function getResults (req, res){
+    var voting_ended = false;
+    if(voting_ended){
+        // Función para obtener los votos de la urna
+    }
+    else{
+        return res.status(403).send("La votació no ha acabat");
+    }
 }
 
 /*function logIn (req, res){

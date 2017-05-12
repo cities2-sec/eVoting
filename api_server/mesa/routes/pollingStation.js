@@ -11,5 +11,6 @@ const api = express.Router();
 //api.get('/private', auth, userCtrl.authUser);
 
 api.get('/keys', pollingStation.getKeys);
+api.get('/results', pollingStation.getResults);
 
 module.exports = api;
