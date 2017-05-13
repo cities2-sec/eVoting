@@ -10,6 +10,9 @@ var mongooseUniqueValidator = require('mongoose-unique-validator');
 const schema = mongoose.Schema;
 
 const ballotBoxSchema =  new schema({
+    id_anomin: String,
+    voted: Boolean,
+    timestamp: Date,
     votes: [{type: String
     }]
 });
