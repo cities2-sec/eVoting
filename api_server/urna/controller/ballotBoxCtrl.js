@@ -3,9 +3,9 @@
  */
 var express = require('express');
 var router = express.Router();
-var rsa = require('./rsa-bignum');
+var rsa = require('../../module/rsa');
 var bignum = require('bignum');
-var CryptoJS = require('crypto-js');
+var CryptoJS = require('crypto');
 
 const BallotBox = require('../model/ballotBoxModel');
 const service = require('../../services');

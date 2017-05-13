@@ -15,6 +15,7 @@ function getResults (req, res){
     var voting_ended = false;
     if(voting_ended){
         // Función para obtener los votos de la urna
+        return null;
     }
     else{
         return res.status(403).send("La votació no ha acabat");
@@ -59,5 +60,6 @@ function getResults (req, res){
 }*/
 
 module.exports = {
-    getKeys
+    getKeys,
+    getResults
 };
