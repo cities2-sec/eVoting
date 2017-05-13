@@ -24,7 +24,7 @@ const allowCrossDomain = function (req, res, next) {
 
 /* Dependencies */
 const censo = require('./api_server/censo/routes/censo');
-const mesa = require ('./api_server/mesa_electoral/routes/pollingStation');
+const mesa = require ('./api_server/mesa/routes/pollingStation');
 const urna = require ('./api_server/urna/routes/ballotBox');
 
 /* App */

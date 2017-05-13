@@ -60,7 +60,9 @@ function createKeys(req) {
         }
     })
 }
-var PollingStationKey = {};
+
+//var PollingStationKey = {};
+global.PollingStationKey = {};
 
 function createPollingStationKey() {
     var req = "mesa";
@@ -72,6 +74,7 @@ function createPollingStationKey() {
         }
         if (clave) {
             console.log(`Keys existed for ${req} `);
+            global.PollingStationKey = clave;
             return clave;
         }
         else {
@@ -89,19 +92,9 @@ function createPollingStationKey() {
                     e: keys.publicKey.e,
                     n: keys.publicKey.n,
                     bits: keys.publicKey.bits,
-                }/*,
-                privateKey: {
-                    p: keys.privateKey.p,
-                    q: keys.privateKey.q,
-                    d: keys.privateKey.d,
-                    phi: keys.privateKey.phi,
-                    publicKey: {
-                        e: keys.publicKey.e,
-                        n: keys.publicKey.n,
-                        bits: keys.publicKey.bits
-                    }
-                }*/
+                }
             });
+            global.PollingStationKey = key;
             key.save(function (err) {
                 if (err) {
                     console.log(`ERROR: Not saved in Database: ${err}`);
@@ -114,23 +107,18 @@ function createPollingStationKey() {
             })
         }
     });
-    PollingStationKey = key;
     return key;
 }
 
 function createSecretSharing(clave) {
     /* MESA */
-    //var bitslength = config.bitslength;
     console.log("\n*************PRUEBA SHARING KEYS*************");
-    //var keys = new rsa.generateKeys(bitslength);
     var shares = secrets.share(clave.privateKey.p.toString(), 4, 3);
     console.log("Share Sharing Keys\n" + shares);
     var comb = secrets.combine(shares.slice(0, 3));
     console.log("The combination of 3 of 4 is correct?");
     console.log(comb == clave.privateKey.p.toString());
     console.log("*********************************************\n");
-    //const clave = null;
-
 }
 
 function createToken(user) {

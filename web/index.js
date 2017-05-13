@@ -80,30 +80,31 @@ angular.module('MainApp', ['ngRoute'])
 
 
 	$scope.getAnonimID = function(){
-		var r,bm,pk,n,e;
-		do {
-		  r = bigInt.randBetween("0", "1e100");
-		} while(r <= 1)
-		console.log(r.toString());
-		console.log("KEYS CENSO: "+$scope.censoKeys);
-		console.log("KEYS USER: "+$scope.userKeys);
+		var r,bm,pk,nc,ec, eu, nu;
+		r = bigInt.randBetween("0", "1e100");
 
-		n = bigInt($scope.censoKeys.publicKey.n);
-		e = bigInt($scope.censoKeys.publicKey.e);
-		//PK//
-		pk = bigInt($scope.userKeys.publicKey.e);
+		nc = bigInt($scope.censoKeys.publicKey.n);
+		ec = bigInt($scope.censoKeys.publicKey.e);
+		eu = bigInt($scope.userKeys.publicKey.e);
+		nu = bigInt($scope.userKeys.publicKey.n);
 
-		console.log("n" +n);
-		console.log("e" +e);
-		console.log("pk"+ pk);
+		pk = nu;
+		console.log(pk);
 
-		bm = pk.multiply(r.modPow(e, n)).mod(n);
-		var identity = bm.toString();
+		bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
+
+		var identity = bm.toString(16);
+
 		console.log(bm);
-		console.log(bm.toString());
+		var sign = ({
+			id : identity
+		});
+
+		console.log(sign);
+
 		//var result =  m.modPow(e, n);
 
-		$http.post('/censo/identity/request2',bm)
+		$http.post('/censo/identity/request2',sign)
 		.then(function successCallback(response){
 			if(response.status == 200){
 				console.log(response.data.toString());

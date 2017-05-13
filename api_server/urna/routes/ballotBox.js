@@ -12,5 +12,6 @@ const api = express.Router();
 //api.get('/private', auth, userCtrl.authUser);
 
 api.post('/vote', ballotBoxCtrl.toVote);
+api.get('/open', ballotBoxCtrl.openBox);
 
 module.exports = api;

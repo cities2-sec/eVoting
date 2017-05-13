@@ -5,6 +5,22 @@
 const PollingStation = require('../model/pollingStationModel');
 const service = require('../../services');
 
+
+
+function getKeys (req, res) {
+    return res.json({keys: global.PollingStationKey});
+}
+
+function getResults (req, res){
+    var voting_ended = false;
+    if(voting_ended){
+        // Función para obtener los votos de la urna
+    }
+    else{
+        return res.status(403).send("La votació no ha acabat");
+    }
+}
+
 /*function logIn (req, res){
     const user = new User({
         username: req.body.username,
@@ -19,11 +35,6 @@ const service = require('../../services');
         return res.status(201).send({token: service.createToken(user)});
     })
 }*/
-
-function getKeys(res) {
-    //res.json({success: true});
-    res.json({keys: service.PollingStationKey});
-}
 
 /*function signIn(req, res) {
     User.find({ email: req.body.email }, function(err, user){
