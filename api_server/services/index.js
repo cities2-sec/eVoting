@@ -124,26 +124,24 @@ function createSecretSharing(clave) {
 function createToken(user) {
     console.log("Create Token for " + user.username);
     const payload = {
-        sub: user._id,
+        username: user.username,
         iat: moment().unix(), // Data token created
         exp: moment().add(14, 'days').unix() // Expired data
     }
     return jwt.encode(payload, config.SECRET_TOKEN);
-
 }
 
 function decodeToken(token) {
     const decoded = new Promise(function (resolve, reject) {
         try {
-            payload = jwt.decode(token, config.SECRET_TOKEN)
-
+            payload = jwt.decode(token, config.SECRET_TOKEN);
             if (payload.exp <= moment().unix()) {
                 resolve({
                     status: 401,
                     message: "Token expired"
                 })
             }
-            resolve(payload.status);
+            resolve(payload.username);
         }
         catch (err) {
             reject({

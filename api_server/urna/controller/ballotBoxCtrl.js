@@ -3,7 +3,11 @@
  */
 var express = require('express');
 var router = express.Router();
+<<<<<<< HEAD
 //var rsa = require('./rsa-bignum');
+=======
+var rsa = require('../../module/rsa');
+>>>>>>> 1915216f1149da7c07839172659ecea1727345dd
 var bignum = require('bignum');
 var CryptoJS = require('crypto');
 
@@ -36,10 +40,10 @@ function verificar(publicKey_user){
    var salida = rsa.publicKey.verify(publicKey_user);
 
    if(IsJsonString(salida)){
-            es valido entonce meto el voto con la id_anonim en la BD
+            //es valido entonce meto el voto con la id_anonim en la BD
     }
     else {
-       no valido
+       //no valido
    }
 }
 
