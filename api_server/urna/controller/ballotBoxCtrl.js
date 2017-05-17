@@ -3,11 +3,11 @@
  */
 var express = require('express');
 var router = express.Router();
-<<<<<<< HEAD
+
 //var rsa = require('./rsa-bignum');
-=======
+
 var rsa = require('../../module/rsa');
->>>>>>> 1915216f1149da7c07839172659ecea1727345dd
+
 var bignum = require('bignum');
 var CryptoJS = require('crypto');
 
@@ -15,15 +15,46 @@ const BallotBox = require('../model/ballotBoxModel');
 const service = require('../../services');
 
 
+function hexToAscii(hexx) {
+    var hex = hexx.toString();//force conversion
+    var str = '';
+    for (var i = 0; i < hex.length; i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+}
+function convertToHex(str) {
+    var hex = '';
+    for (var i = 0; i < str.length; i++) {
+        hex += '' + str.charCodeAt(i).toString(16);
+    }
+    return hex;
+}
+function hexToBase64(str) {
+    return btoa(String.fromCharCode.apply(null,
+        str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
+    );
+}
+function base64ToHex(str) {
+    for (var i = 0, bin = atob(str.replace(/[\r\n]+$/, "")), hex = []; i < bin.length; ++i) {
+        var tmp = bin.charCodeAt(i).toString(16);
+        if (tmp.length === 1) tmp = "0" + tmp;
+        hex[hex.length] = tmp;
+    }
+    return hex.join(" ");
+}
+
+
 
 function toVote(req, res){
+    //me deben mandar el voto firmado q ya contiene el voto encriptado, la id_anonima, Kcenso
+
     //recoger los datos
     var id_anonim = req.body.id_anonim; //de aqui saco su publica para verificar
-    var voto = req.body.voto; // de aqui saco su publica para verificar si ha sido firmado por el censo
-
+    var voto_firmado_encriptado = req.body.voto; // de aqui saco su publica para verificar si ha sido firmado por el censo
+    var Kcenso = req.body.Kpublic_censo;
 //recojo el publicKey del usuario y lo paso como parametro a la funcion de verificar.
     //verificarlo y que tenga la forma correcta
-    verificar();
+    verificar(voto_firmado_encriptado, Kcenso);
 
     //si es correcto guardamos el voto encriptado con la id_anonim en BD
 
@@ -31,16 +62,19 @@ function toVote(req, res){
     return null;
 }
 
-
 //mis funciones
-function verificar(publicKey_user){
+function verificar(voto_firmado_encriptado, Kcenso){
 
+    //Kcenso --> klave rsa generado
+   var mensajeoriginal = Kcenso.publicKey.verify(voto_firmado_encriptado); //verifico el voto firmado
+   var mensajeoriginalhex = mensajeoriginal.toString(16);
+   var mensajeoriginalascii = hexToAscii(mensajeoriginalhex);
+    console.log(mensajeoriginalascii +' su voto: '+voto);
 
-    //le paso el public key del usuario
-   var salida = rsa.publicKey.verify(publicKey_user);
-
-   if(IsJsonString(salida)){
-            //es valido entonce meto el voto con la id_anonim en la BD
+    var str = mensajeoriginalascii.slice(0,6);
+    //comprobamos si_tiene nuestra_identificador en la posición que toque
+   if(str = '201617'){
+       //es valido entonce meto el voto con la id_anonim en la BD
     }
     else {
        //no valido
