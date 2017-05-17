@@ -3,9 +3,9 @@
  */
 var express = require('express');
 var router = express.Router();
-var rsa = require('./rsa-bignum');
+//var rsa = require('./rsa-bignum');
 var bignum = require('bignum');
-var CryptoJS = require('crypto-js');
+var CryptoJS = require('crypto');
 
 const BallotBox = require('../model/ballotBoxModel');
 const service = require('../../services');
@@ -33,7 +33,14 @@ function verificar(publicKey_user){
 
 
     //le paso el public key del usuario
-    rsa.publicKey.verify(publicKey_user);
+   var salida = rsa.publicKey.verify(publicKey_user);
+
+   if(IsJsonString(salida)){
+            es valido entonce meto el voto con la id_anonim en la BD
+    }
+    else {
+       no valido
+   }
 }
 
 

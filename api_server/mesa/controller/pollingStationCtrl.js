@@ -15,10 +15,12 @@ function getResults (req, res){
     var voting_ended = false;
     if(voting_ended){
         // Función para obtener los votos de la urna
+        return null;
     }
     else{
         return res.status(403).send("La votació no ha acabat");
     }
+    return null;
 }
 
 /*function logIn (req, res){
@@ -59,5 +61,6 @@ function getResults (req, res){
 }*/
 
 module.exports = {
-    getKeys
+    getKeys,
+    getResults
 };
