@@ -32,7 +32,7 @@ function identityRequest(req, res) {
                     var privateKey = new rsa.privateKey(key.privateKey.p, key.privateKey.q, key.privateKey.d, key.privateKey.phi, publicKey);
 
                     // Firma la identidad
-                    var signedMsg = privateKey.sign(body.msg);
+                    var signedMsg = privateKey.sign(bignum(body.msg, 16)).toString(16);
 
                     // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
                     User.update({
@@ -48,7 +48,10 @@ function identityRequest(req, res) {
                             // Ha salido bien, enviamos la identidad firmada
                             // *** De momento no hacemos no repudio
                             //TODO: no repudio
-                            res.status(200).json(signedMsg);
+                            var msg = {
+                                "sign": signedMsg
+                            }
+                            res.status(200).json(msg);
                     });
 
                 }
