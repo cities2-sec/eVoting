@@ -3,7 +3,10 @@ const User = require('../model/SchemaUser');
 const mongoose = require('mongoose');
 const Keys = require('../../model/SchemaKeys');
 var bignum = require('bignum');
+var crypto = require('crypto');
 
+
+var sessions = [];
 
 function identityRequest(req, res) {
     var body = req.body;
@@ -45,13 +48,13 @@ function identityRequest(req, res) {
                                 console.log(err);
                                 return res.status(500).json("Server error");
                             }
-                            // Ha salido bien, enviamos la identidad firmada
-                            // *** De momento no hacemos no repudio
-                            //TODO: no repudio
-                            var msg = {
-                                "sign": signedMsg
+
+                            // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo
+                            var currentSession = {
+                                "username": req.user.username
                             }
-                            res.status(200).json(msg);
+                            // Empiezo el no repudio enviando el primer mensaje
+                            startNonRepudiation("hola", privateKey, res, currentSession);
                     });
 
                 }
@@ -62,7 +65,7 @@ function identityRequest(req, res) {
 
             break;
         case 2:
-            res.status(501).json();
+            processMsg2(body.msg, {}, res, getSessionFromUsername(req.user.username));
             break;
         case 3:
             res.status(501).json();
@@ -94,33 +97,88 @@ function identityRequest2(req, res) {
       res.status(200).send({ sign: signedMsg })
     }
   })
-
-
-
-
 }
 
-/*function saveProduct (req, res) {
-  console.log('POST /api/product')
-  console.log(req.body)
+function startNonRepudiation(msg, privateKey, res, currentSession) {
+  //generar una clave simétrica
+  var algorithm = 'aes256';
+  var inputEncoding = 'utf8';
+  var keyBuf = crypto.randomBytes(256);
+  var key = keyBuf.toString('base64');
+  var outputEncoding = 'hex';
 
-  let product = new Product()
-  product.name = req.body.name
-  product.picture = req.body.picture
-  product.price = req.body.price
-  product.category = req.body.category
-  product.description = req.body.description
+  //enciptamos el mensaje con la clave generada
+  console.log("Cifrando msg: "+msg+" con altorigmo: "+algorithm+ " y clave: "+key);
+  var cipher = crypto.createCipher(algorithm, key);
+  var ciphered = cipher.update(msg, inputEncoding, outputEncoding);
+  ciphered += cipher.final(outputEncoding);
 
-  product.save((err, productStored) => {
-    if (err) res.status(500).send({message: `Error al salvar en la base de datos: ${err} `})
+  console.log("Resultado: "+ciphered);
 
-    res.status(200).send({ product: productStored })
-  })
-}*/
+  //Generamos el hash del proof of origin
+  var PoString = "A%B%"+ciphered;
+  var hash = crypto.createHash('sha256');
+  hash.update(PoString);
+  var PoHash = hash.digest('base64');
+  //Firmamos el Po
+  var signedPoHash = privateKey.sign(bignum.fromBuffer(Buffer.from(PoHash, 'base64'))).toString(16);
 
+  //Mensaje con todos los campos necesarios
+  var msg1 = {
+    "src": "A",
+    "dst": "B",
+    "C": ciphered,
+    "Po": signedPoHash
+  }
+  // Me guardo la C y la key para poder comprobar el Pr en el mensaje que me devolverá
+  currentSession.C = ciphered;
+  currentSession.key = key;
 
+  //Lo guardo en una variable de scope de todo el documento
+  sessions.push(currentSession);
+
+  res.status(200).json(msg1);
+}
+
+function processMsg2(msg, privateKey, res, currentSession) {
+  console.log(JSON.stringify(msg));
+  // Genero la public key a partir de los datos que ha enviado
+  var publicKey = new rsa.publicKey(msg.publicKey.bits, new bignum(msg.publicKey.n, 16), new bignum(msg.publicKey.e, 16));
+  // El Pr viene firmado, así que compruebo la firma
+  var unsignedPr = publicKey.verify(bignum(msg.Pr, 16));
+  var PrHash = unsignedPr.toBuffer().toString('base64');
+
+  // Una vez tengo el hash del Pr recibido, genero otro para compararlos
+  var myPrString = msg.src+"%"+msg.dst+"%"+currentSession.C;
+  console.log("myPrString: "+myPrString);
+  var hash = crypto.createHash('sha256');
+  hash.update(myPrString);
+  var myPrHash = hash.digest('base64');
+
+  console.log("PrHash: "+PrHash);
+  console.log("myPrHash: "+myPrHash);
+  // Comparo el hash recibido y el generado por mi
+  if(PrHash == myPrHash) {
+      console.log("Pr verificado");
+  }
+  else{
+      return;
+  }
+
+  //Falta continuar enviando los datos a la ttp
+}
+
+// Esta función busca en la lista de sesiones la correspondiente al usuario pasado por parámetros
+var getSessionFromUsername = function(username) {
+  for(var i = 0; i<sessions.length; i++) {
+      if(sessions[i].username == username) {
+          return sessions[i];
+      }
+  }
+  return {};
+}
 
 module.exports = {
-    identityRequest,
-    identityRequest2
+  identityRequest,
+  identityRequest2
 }

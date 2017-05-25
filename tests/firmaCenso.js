@@ -1,9 +1,11 @@
 var bignum = require('bignum');
 const rsa = require('../api_server/module/rsa');
 const http = require('http');
+var crypto = require('crypto');
 
 var msg = "6485";
 var censoPK = null;
+var keys = rsa.generateKeys(512);
 
 var options = {
     "method": "GET",
@@ -68,14 +70,48 @@ var identityRequest = function() {
         res.on("end", function () {
             var body = JSON.parse(Buffer.concat(chunks).toString());
             console.log(JSON.stringify(body));
-            var unsignedMsg = censoPK.verify(bignum(body.sign, 16));
-            var unsignedMsgStr = unsignedMsg.toString(16);
-            if(msg == unsignedMsgStr) {
-                console.log("Firma verificada");
+
+            var unsignedPo = censoPK.verify(bignum(body.Po, 16));
+
+            var myPoString = body.src+"%"+body.dst+"%"+body.C;
+            var hash = crypto.createHash('sha256');
+            hash.update(myPoString);
+            var myPoHash = hash.digest('base64');
+
+            var PoHash = unsignedPo.toBuffer().toString('base64');
+            console.log("PoHash: "+PoHash);
+            console.log("myPoHash: "+myPoHash);
+            if(PoHash == myPoHash) {
+                console.log("Po verificado");
             }
-            else {
-                console.log("Firma incorrecta");
+            else{
+                return;
             }
+
+            var hash = crypto.createHash('sha256');
+            var PrString = "B%A%"+body.C;
+            console.log("PrString: "+PrString);
+            hash.update(PrString);
+            var PrHash = hash.digest('base64');
+            console.log("Pr hash: "+PrHash);
+            var signedPrHash = keys.privateKey.sign(bignum.fromBuffer(Buffer.from(PrHash, 'base64'))).toString(16);
+            var msg2 = {
+                "msgid": 2,
+                "msg": {
+                    "src": "B",
+                    "dst": "A",
+                    "Pr": signedPrHash,
+                    "publicKey": {
+                        "bits": keys.publicKey.bits,
+                        "n": keys.publicKey.n.toString(16),
+                        "e": keys.publicKey.e.toString(16)
+                    }
+                }
+            }
+
+            sendMsg2(msg2);
+
+
         });
     });
 
@@ -83,8 +119,41 @@ var identityRequest = function() {
     post_req.end(body);
 }
 
+var sendMsg2 = function(msg) {
+    var body = JSON.stringify(msg);
+
+    var options = {
+        hostname: 'localhost',
+        port: 8080,
+        path: '/censo/identity/request',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body),
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNzYW50aTIiLCJpYXQiOjE0OTUyMDIxNjMsImV4cCI6MTQ5NjQxMTc2M30.B0vQlhKy7TOs4HGRardygVYFwnl_ziKaVmrSEpBoEfo"
+        }
+    };
+
+    var post_req = http.request(options, function (res) {
+        if(res.statusCode !== 200) {
+            console.log("Error");
+            return;
+        }
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            var body = JSON.parse(Buffer.concat(chunks).toString());
+            console.log(JSON.stringify(body));
 
 
 
+        });
+    });
 
-
+    //post the data
+    post_req.end(body);
+}
