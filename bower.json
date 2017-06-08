@@ -25,6 +25,7 @@
     "angular-material": "^1.1.4",
     "angular-web-notification": "^1.2.22",
     "angular-notify": "^2.5.1",
-    "ngstorage": "^0.3.11"
+    "ngstorage": "^0.3.11",
+    "js-sha512": "^0.3.0"
   }
 }

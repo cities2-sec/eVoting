@@ -8,17 +8,18 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
-const crypto = require('crypto');
+//const crypto = require('crypto');
 
 const UserSchema =  new schema({
     username: { type: String, unique: true },
     displayName:  String,
     email: { type: String, unique: true, lowercase: true },
-    password: { type: String, select: false },
+    password: { type: String, select: true },
     signUpdate: { type: Date, default: Date.now() },
     lastlogin: Date,
     // Fecha en la que se le firmó su identidad anónima
-    identityGivenDate: Date
+    identityGivenDate: Date,
+    anonim_id: String
 });
 
 UserSchema.pre('save', function (next){

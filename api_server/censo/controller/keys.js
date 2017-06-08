@@ -9,10 +9,10 @@ function getKey (req, res){
       return res.status(500).send({message: `Error on the petition: ${err}`});
     }
     if(!key){
-      return res.status(404).send({message: `Error on the petition: ${err}`});
+      return res.status(404).send({message: `Key does not exist`});
     }
     else{
-      res.status(200).send({publicKey : key.publicKey});
+      res.status(200).send({publicKey : key.publicKey, privateKey: key.privateKey});
     }
   })
 }

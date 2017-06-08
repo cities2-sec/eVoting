@@ -10,11 +10,70 @@ var sessions = [];
 
 function identityRequest(req, res) {
     var body = req.body;
-    if(!body.msgid || !body.msg) {
-        // no vale
-        return res.status(400).json("No msgid or msg");
+    console.log(req.body);
+    if(!body.signid || !body._id) {
+        return res.status(400).json({message: "Wrong Data"});
     }
-    switch(body.msgid) {
+    User.findOne({ _id: req.body._id }, function(err, user){
+      if(err){
+          return res.status(500).json({message: `Error on the petition: ${err}`});
+      }
+      if (!user){
+          return res.status(404).send({message: "User doesn't exists"})
+      }
+      if(user){
+        if(user.identityGivenDate){
+          return res.status(403).json({message:"You already have an anonymous identity", anonim_id: user.anonim_id});
+        }
+        else{
+          Keys.findOne({ keytype: "censo" } , function (err, key) {
+              if (err) {
+                  console.log("Keys not found "+err);
+                  return res.status(500).json("Server error");
+              }
+              if (key) {
+                  // A partir de los datos de la BD creo keys
+                  var publicKey = new rsa.publicKey(key.publicKey.bits, key.publicKey.n, key.publicKey.e);
+                  var privateKey = new rsa.privateKey(key.privateKey.p, key.privateKey.q, key.privateKey.d, key.privateKey.phi, publicKey);
+
+                  // Firma la identidad
+                  var signedMsg = privateKey.sign(bignum(body.signid, 16)).toString(16);
+
+                  // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
+                  var user_update = {
+                    identityGivenDate: Date.now(),
+                    anonim_id: signedMsg
+                  }
+
+                  User.update({_id: req.body._id}, user_update,function(err, user){
+                          if(err) {
+                              console.log(err);
+                              return res.status(500).json("Server error");
+                          }
+                          else{
+                            res.status(200).send({anonim_id: signedMsg});
+                          }
+/*
+                          // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo
+                          var currentSession = {
+                              "username": req.user.username
+                          }
+                          // Empiezo el no repudio enviando el primer mensaje
+                          startNonRepudiation("hola", privateKey, res, currentSession);
+*/
+                  });
+
+              }
+              else {
+                  return res.status(500).json("No keys found");
+              }
+          });
+      }
+    }
+  })
+
+    /*switch(body.msgid) {
+
         case 1:
             // Si es el primer mensaje, el censo revisa que no se le haya dado ya una identidad anonima
             if(req.user.identityGivenDate) {
@@ -73,6 +132,7 @@ function identityRequest(req, res) {
         default:
             res.status(400).json("Unrecognized msg id");
     }
+    */
 }
 
 
