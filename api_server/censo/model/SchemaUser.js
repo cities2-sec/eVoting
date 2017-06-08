@@ -15,7 +15,6 @@ const UserSchema =  new schema({
     displayName:  String,
     email: { type: String, unique: true, lowercase: true },
     password: { type: String, select: false },
-    avatar: String,
     signUpdate: { type: Date, default: Date.now() },
     lastlogin: Date,
     // Fecha en la que se le firmó su identidad anónima

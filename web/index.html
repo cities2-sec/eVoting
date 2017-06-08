@@ -12,6 +12,7 @@
 	<!-- JavaScript -->
 	<script src="/bower_components/angular/angular.min.js"></script>							<!-- Angular -->
 	<script src="/bower_components/angular-route/angular-route.min.js"></script>
+	<script src="/bower_components/ngstorage/ngStorage.min.js"></script>
 
 	<script src="/bower_components/jquery/dist/jquery.min.js"></script>						<!-- Jquery -->
 	<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>	<!-- Boostrap -->
@@ -60,7 +61,6 @@
 				<p> MESA ELECTORAL </p>
 			</div>
 		</div>
-
  Botons -->
 
 		<div class="row">
@@ -77,10 +77,11 @@
 								<div class="col-sm-4 col-sm-offset-1 text-center">
 							<form name="myForm">
 								<div class="form-group">
-									<input type="text" class="form-control input-lg text-center" placeholder="Text" ng-model="newKey.text" required>
-									<br>
+									<input type="text" class="form-control input-lg text-center" placeholder="NIF" ng-model="login.username" required>
+										<br>
+									<input type="text" class="form-control input-lg text-center" placeholder="password" ng-model="login.password" required>
 								</div>
-								<button type="submit" class="btn btn-success btn-lg" ng-click="enviartexto()" ng-disabled="myForm.$invalid || selected">Enviar</button>
+								<button type="submit" class="btn btn-success btn-lg" ng-click="logIn()" ng-disabled="!login.username || !login.password">Enviar</button>
 								</form>
 						</div>
 					</p>
@@ -100,8 +101,6 @@
 		</div>
 	</div>
 	</div>
-
-
 
 
 </body>

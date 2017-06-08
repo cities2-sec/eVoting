@@ -30,9 +30,8 @@ function login(req, res) {
             return res.status(500).json("Server error: "+err);
         }
         if (!user){
-            return res.status(484).send({message: "User doesn't exists"})
+            return res.status(404).send({message: "User doesn't exists"})
         }
-
         // TODO: comprobar contraseña
         res.status(200).send({
             message: "Login",

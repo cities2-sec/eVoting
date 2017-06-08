@@ -1,6 +1,6 @@
-angular.module('MainApp', ['ngRoute'])
+angular.module('MainApp', ['ngRoute','ngStorage'])
 
-.config(['$routeProvider', '$locationProvider', function ( $routeProvider, $locationProvider){
+.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider){
 	$locationProvider.html5Mode({
 		enabled:true, requireBase: false
 	});
@@ -27,11 +27,64 @@ angular.module('MainApp', ['ngRoute'])
 
 
 
-.controller('mainController',function ($scope, $http) {
+.controller('mainController',function ($scope, $http, $localStorage, $sessionStorage) {
 	var bitlength = 128;
 	var userKeys,censoKeys;
 	$scope.censoKeys = {};
 	$scope.userKeys = {};
+	$scope.login = {};
+
+	$scope.nif = function(dni){
+		var number
+  	var word
+	  var words
+	  var regular_expression_nif
+
+	  regular_expression_nif = /^\d{8}[a-zA-Z]$/;
+
+	  if(regular_expression_nif.test (dni) == true){
+	     number = dni.substr(0,dni.length-1);
+	     word = dni.substr(dni.length-1,1);
+	     number = number % 23;
+	     words='TRWAGMYFPDXBNJZSQVHLCKET';
+	     words=words.substring(number,number+1);
+	    if (words!=word.toUpperCase()) {
+	       alert('NIF incorrect');
+				 return "NIF incorrect";
+	     }else{
+				 return "0";
+	     }
+	  }else{
+	     alert('Invalid Format');
+			 return "Invalid Format";
+	   }
+	}
+
+	$scope.logIn = function (){
+		var nif = $scope.nif($scope.login.username);
+		//console.log(nif);
+		if (nif == 0){
+			$http.post('censo/login', $scope.login)
+			.then(function successCallback(response){
+				if(response.status == 200){
+					$localStorage.token = response.data.token;
+					$scope.login = {}; // Borramos los datos del formulario
+					console.log("My token is "+ $localStorage.token);
+				}
+			},function errorCallback(response){
+				if(response.status == 404){
+					console.log('Error: ' + response.data.message)
+				}
+				if(response.status == 400){
+					console.log('Error: ' + response.data.message)
+				}
+				if(response.status == 500){
+					console.log('Error: ' + response.data.message)
+				}
+
+			})
+		}
+	}
 
 	//Create our Keys
 	$scope.createOurKey  = function() {
@@ -62,8 +115,7 @@ angular.module('MainApp', ['ngRoute'])
 		saveAs(blob, "MyKeys.txt");
 		*/
 	}
-
-	//GET keys from Censo
+	//GET keys from CENSO
 	$scope.getCensoKeys = function(){
 		$http.get('/censo/key')
 		.then(function successCallback(response){
@@ -77,8 +129,7 @@ angular.module('MainApp', ['ngRoute'])
 			console.log(response.status+ " " +response.data);
 		})
 	}
-
-
+	// GET AnonimID from CENSO
 	$scope.getAnonimID = function(){
 		var r,bm,pk,nc,ec, eu, nu;
 		r = bigInt.randBetween("0", "1e100");
