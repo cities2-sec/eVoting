@@ -8,7 +8,6 @@
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 	<!-- JavaScript -->
 	<script src="/bower_components/angular/angular.min.js"></script>							<!-- Angular -->
@@ -46,51 +45,6 @@
 				</div>
 		</nav>
 
-
-
-		<div id="login-overlay" class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h3 class="modal-title" id="myModalLabel">Bienvenido al Censo Electoral</h3>
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <div class="col-xs-6">
-                      <div class="well">
-                          <form id="loginForm">
-                              <div class="form-group">
-                                  <label for="username" class="control-label">DNI</label>
-                                  <input type="text" class="form-control" id="username" name="username" autocomplete="on" required="" ng-model="login.username" title="Please enter your NIF">
-																	<span class="help-block"></span>
-                              </div>
-                              <div class="form-group">
-                                  <label for="password" class="control-label">Contraseña</label>
-                                  <input type="password" class="form-control" id="password" name="password" autocomplete="on"  required="" title="Please enter your password" ng-model="login.password">
-                              </div>
-                              <div id="alert" class="alert alert-warning text-center"  ng-show="showAlert">
-																<strong>Alerta!</strong> {{alertText}}</div>
-                              <button type="submit" class="btn btn-success btn-block" ng-click="logIn()" ng-disabled="!login.username || !login.password">Login</button>
-                          </form>
-                      </div>
-                  </div>
-                  <div class="col-xs-6">
-                      <p class="lead">Información:</p>
-                      <ul class="list-unstyled" style="line-height: 2">
-                          <li><span class="fa fa-check text-success"></span> Usa Mayúsculas para la letra del DNI</li>
-                          <li><span class="fa fa-check text-success"></span> Obtendrás una ID anonima</li>
-                          <li><span class="fa fa-check text-success"></span> Para más información contacte con el Ministerio</li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-
-
-
-
-
 <!-- Botons
 
 		<div idclass="row">
@@ -121,11 +75,19 @@
 						<p>
 						<button type="submit" class="btn btn-danger btn-lg" ng-click="getAnonimID()">Create Anonim ID</button>
 					</div>
+								<div class="col-sm-4 col-sm-offset-1 text-center">
+							<form name="myForm">
+								<div class="form-group">
+									<input type="text" class="form-control input-lg text-center" autocomplete="on" placeholder="NIF" ng-model="login.username" required>
+										<br>
+									<input type="password" class="form-control input-lg text-center" autocomplete="on" placeholder="password" ng-model="login.password" required>
+								</div>
+								<button type="submit" class="btn btn-success btn-lg" ng-click="logIn()" ng-disabled="!login.username || !login.password">Enviar</button>
+								</form>
+						</div>
 					</p>
 				</div>
 			</div>
-
-
 		<div class="panel panel-success">
 			<!-- Default panel contents -->
 			<div class="panel-heading">Urna</div>

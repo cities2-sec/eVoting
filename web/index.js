@@ -31,6 +31,10 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 	$scope.userKeys = {};
 	$scope.login = {};
 
+	//ERROR MESSAGE
+	$scope.alertText ={};
+	$scope.showAlert = false;
+
 
 $scope.login.username = "47915398G";
 $scope.login.password = "pass";
@@ -38,6 +42,7 @@ $scope.login.password = "pass";
 
 	// Login NIF+pass
 	$scope.logIn = function (){
+		$scope.login.username = $scope.login.username.toUpperCase();
 		var nif = $scope.nif($scope.login.username);
 		if (nif == 0){
 			$http.post('censo/login', $scope.login)
@@ -52,17 +57,25 @@ $scope.login.password = "pass";
 					console.log($scope.userinfo);
 				}
 			},function errorCallback(response){
-				if(response.status == 400){
+				if(response.status == 400){ // Falta el USuario o Contraseña
 					console.log('Error: ' + response.data.message);
+					$scope.alertText =response.data.message;
+					$scope.showAlert = true;
 				}
-				if(response.status == 401){
+				if(response.status == 401){ // Usuario o Contraseña incorrecto
 					console.log('Error: ' + response.data.message);
+					$scope.alertText =response.data.message;
+					$scope.showAlert = true;
 				}
-				if(response.status == 404){
+				if(response.status == 404){ //USER DOESN'T EXIST
 					console.log('Error: ' + response.data.message);
+					$scope.alertText =response.data.message;
+					$scope.showAlert = true;
 				}
-				if(response.status == 500){
+				if(response.status == 500){ //SERVER ERROR
 					console.log(response.data.message);
+					$scope.alertText =response.data.message;
+					$scope.showAlert = true;
 				}
 
 			})
@@ -81,13 +94,15 @@ $scope.login.password = "pass";
 			 words='TRWAGMYFPDXBNJZSQVHLCKET';
 			 words=words.substring(number,number+1);
 			if (words!=word.toUpperCase()) {
-				 alert('NIF incorrect');
+				$scope.alertText = "DNI Incorrecto";
+				$scope.showAlert = true;
 				 return "NIF incorrect";
 			 }else{
 				 return "0";
 			 }
 		}else{
-			 alert('Invalid Format');
+			$scope.alertText = "Formato Invalido";
+			$scope.showAlert = true;
 			 return "Invalid Format";
 		 }
 	}
@@ -187,23 +202,35 @@ $scope.login.password = "pass";
 		$http.post('/censo/identity/request',body_sign, options)
 		.then(function successCallback(response){
 			if(response.status == 200){
-				console.log("anonim id"+response.data.anonim_id);
-				var id = bigInt(parseInt(response.data.anonim_id,16));
-				console.log("decimal id"+id.toString());
-				var identity_anonim =  id.multiply(r.modInv(nu)).mod(nc);
-				console.log("invtid"+identity_anonim.toString());
+				console.log("anonim id   "+response.data.anonim_id);
+				//var id = bigInt(parseInt(response.data.anonim_id,16));
+				var id_2 = bigInt(response.data.anonim_id,16);
+				//console.log("decimal id   "+id.toString());
+				console.log("decimal id   "+id_2.toString());
+				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc);
+				console.log("invtid   "+identity_anonim.toString());
+
+				var prueba = userKeys.publicKey.verify(identity_anonim);
+				console.log(prueba.toString());
+				console.log($scope.userKeys.publicKey.n.toString());
 			}
 		},function errorCallback(response){
 			console.log(response.status+ " " +response.data.message+ " " +response.data.anonim_id);
 			console.log("anonim id   "+response.data.anonim_id);
 			var id = bigInt(parseInt(response.data.anonim_id,16));
+			var id_2 = bigInt(response.data.anonim_id,16);
 			console.log("decimal id   "+id.toString());
-			var identity_anonim =  id.multiply(r.modInv(nc)).mod(nc);
+			console.log("decimal id   "+id_2.toString());
+			var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc);
 			console.log("invtid   "+identity_anonim.toString());
 
-			var prueba = userKeys.publicKey.verify(identity_anonim);
+
+			console.log($scope.censoKeys.privateKey.d);
+			dc = bigInt($scope.censoKeys.privateKey.d);
+
+			var prueba =  pk.modPow(dc, nc);
+
 			console.log(prueba.toString());
-			console.log($scope.userKeys.publicKey.n.toString());
 
 
 		})

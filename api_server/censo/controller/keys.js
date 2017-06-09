@@ -17,16 +17,6 @@ function getKey (req, res){
   })
 }
 
-/*exports.encrypt = function (req, res) {
-    console.log('req', req.body.result);
-    console.log(keys);
-		var m = bignum(req.body.result);
-		console.log(keys.privateKey.publicKey.n.toString())
-		d = keys.privateKey.decrypt(m);
-		//var d = m.powm(e, n);
-		console.log("Decrypted d :" + d.toString());
-}*/
-
 module.exports = {
     getKey
 }

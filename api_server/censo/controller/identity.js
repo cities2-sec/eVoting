@@ -37,7 +37,10 @@ function identityRequest(req, res) {
                   var privateKey = new rsa.privateKey(key.privateKey.p, key.privateKey.q, key.privateKey.d, key.privateKey.phi, publicKey);
 
                   // Firma la identidad
+                  console.log("signid: " +bignum(body.signid,16));
+                  console.log("signid_2: " +parseInt(body.signid,16))
                   var signedMsg = privateKey.sign(bignum(body.signid, 16)).toString(16);
+                  console.log("signedMsg: "+ signedMsg)
 
                   // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
                   var user_update = {
