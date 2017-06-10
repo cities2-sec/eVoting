@@ -4,6 +4,8 @@
 
 const User = require('../model/SchemaUser');
 const service = require('../../services');
+//const sha512 = require('js-sha512');
+const bcrypt = require('bcrypt-nodejs');
 
 function register(req, res){
     const user = new User({
@@ -27,18 +29,35 @@ function login(req, res) {
     }
     User.findOne({ username: req.body.username }, function(err, user){
         if(err){
-            return res.status(500).json("Server error: "+err);
+            return res.status(500).json({message: `Error on the petition: ${err}`});
         }
         if (!user){
-            return res.status(484).send({message: "User doesn't exists"})
+            return res.status(404).send({message: "User doesn't exists"})
         }
-
-        // TODO: comprobar contraseña
-        res.status(200).send({
-            message: "Login",
-            token: service.createToken(user)
-        });
-
+        if(user){
+          bcrypt.compare(req.body.password, user.password, function(err, comp){
+            if (err) return (err);
+            if(comp == true){
+              const userinfo = {
+                  username: user.username,
+                  displayName: user.displayName,
+                  email: user.email,
+                  _id: user._id
+              };
+              console.log(userinfo);
+              res.status(200).send({
+                  message: "Login",
+                  token: service.createToken(user),
+                  user:userinfo
+              });
+            }
+            else{
+              console.log("Incorrect Password ");
+              console.log(comp);
+              return res.status(401).json({message: "Password or username incorrect"});
+            }
+          })
+        }
     })
 }
 

@@ -9,23 +9,13 @@ function getKey (req, res){
       return res.status(500).send({message: `Error on the petition: ${err}`});
     }
     if(!key){
-      return res.status(404).send({message: `Error on the petition: ${err}`});
+      return res.status(404).send({message: `Key does not exist`});
     }
     else{
-      res.status(200).send({publicKey : key.publicKey});
+      res.status(200).send({publicKey : key.publicKey, privateKey: key.privateKey});
     }
   })
 }
-
-/*exports.encrypt = function (req, res) {
-    console.log('req', req.body.result);
-    console.log(keys);
-		var m = bignum(req.body.result);
-		console.log(keys.privateKey.publicKey.n.toString())
-		d = keys.privateKey.decrypt(m);
-		//var d = m.powm(e, n);
-		console.log("Decrypted d :" + d.toString());
-}*/
 
 module.exports = {
     getKey

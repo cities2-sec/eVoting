@@ -23,7 +23,7 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 	})
 }])
 
-.controller('mainController',function ($scope, $http, $localStorage, $sessionStorage) {
+.controller('mainController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
 	var bitlength = 128;
 	var userKeys;
 	$scope.censoKeys = {};
@@ -53,6 +53,7 @@ $scope.login.password = "pass";
 					console.log("My token is "+ $localStorage.token);
 					console.log("My _id"+ $localStorage._id);
 					console.log($scope.userinfo);
+					$window.location.href = "/censo";
 
 				}
 			},function errorCallback(response){

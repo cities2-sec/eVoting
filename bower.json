@@ -24,6 +24,12 @@
     "polymer": "Polymer/polymer#^1.9.1",
     "angular-material": "^1.1.4",
     "angular-web-notification": "^1.2.22",
-    "angular-notify": "^2.5.1"
+    "angular-notify": "^2.5.1",
+    "ngstorage": "^0.3.11",
+    "js-sha512": "^0.3.0"
+  },
+  "resolutions": {
+    "polymer": "^1.9.1",
+    "webcomponentsjs": "1.0.1"
   }
 }

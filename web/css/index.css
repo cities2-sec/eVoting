@@ -5,6 +5,10 @@
   background-color: rgb(187,232,99);
 }
 
+#alert{
+  font-size: 10px;
+}
+
 #footer {
   padding-bottom: 0px;
   position: fixed;
@@ -27,7 +31,6 @@
   width: 200px;
   border-radius: 100px;
 }
-
 .navbar-brand{
     color: white;
 }
