@@ -33,6 +33,8 @@ mongoose.connect(config.db, function (err, res) {
         console.log(`Running server on http://${config.ip}:${config.port}`);
     });
 
+    global.API = `http://${config.ip}:${config.port}`;
+
     try{
       var privateKey  = fs.readFileSync('cert/mysitename.key', 'utf8');
       var certificate = fs.readFileSync('cert/mysitename.crt', 'utf8');
