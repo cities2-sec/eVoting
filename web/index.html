@@ -133,12 +133,28 @@
 			<!-- Default panel contents -->
 			<div class="panel-heading">Urna</div>
 
+			<br />
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3">
+						<form class="form-horizontal well" role="form">
+							<div class="row" >
+								<div class="col-xs-4"  ng-repeat="party in parties">
+									<img src="./img/ELECCIONES.jpg" style="background-color:{{party.color}};border-color:{{party.color}}" class="img-responsive img-radio">
+									<button type="button" id="{{party.id}}" style="background-color:{{party.color}};border-color:{{party.color}} " class="btn btn-primary btn-radio">{{ party.name }}</button>
+									<input type="checkbox" id="left-item" class="hidden">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 			<div class="col-sm-6 col-sm-offset-1">
-				<table class="table table-striped">
-					<tr ng-repeat="user in users" >
-						<td>{{ user }}</td>
-					</tr>
-				</table>
+					<div class="col-xs-4" ng-repeat="party in parties" >
+							<img src="http://placehold.it/160x100" class="img-responsive img-radio">
+							<button type="button" class="btn btn-primary btn-radio">{{ party.name }}</button>
+							<input type="checkbox" id="left-item" class="hidden">
+					</div>
 			</div>
 		</div>
 	</div>
