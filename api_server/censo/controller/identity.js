@@ -75,15 +75,17 @@ function identityRequest(req, res) {
       }
     }
   })
+}
 
-    /*switch(body.msgid) {
-
+function identityRequest2(req, res) {
+    var body = req.body;
+    switch(body.msgid) {
         case 1:
             // Si es el primer mensaje, el censo revisa que no se le haya dado ya una identidad anonima
+            /*
             if(req.user.identityGivenDate) {
                 return res.status(403).json("You already have an anonymous identity");
-            }
-
+            }*/
             // Firmar identidad
 
             // Obtener keys de la BD
@@ -118,7 +120,7 @@ function identityRequest(req, res) {
                             }
                             // Empiezo el no repudio enviando el primer mensaje
                             startNonRepudiation("hola", privateKey, res, currentSession);
-                    });
+                        });
 
                 }
                 else {
@@ -130,13 +132,9 @@ function identityRequest(req, res) {
         case 2:
             processMsg2(body.msg, {}, res, getSessionFromUsername(req.user.username));
             break;
-        case 3:
-            res.status(501).json();
-            break;
         default:
             res.status(400).json("Unrecognized msg id");
     }
-    */
 }
 
 function startNonRepudiation(msg, privateKey, res, currentSession) {
@@ -182,7 +180,7 @@ function startNonRepudiation(msg, privateKey, res, currentSession) {
   res.status(200).json(msg1);
 }
 
-function processMsg2(msg, privateKey, res, currentSession) {
+function processMsg2(msg, privateKey, finalRes, currentSession) {
   console.log(JSON.stringify(msg));
   // Genero la public key a partir de los datos que ha enviado
   var publicKey = new rsa.publicKey(msg.publicKey.bits, new bignum(msg.publicKey.n, 16), new bignum(msg.publicKey.e, 16));
@@ -204,6 +202,7 @@ function processMsg2(msg, privateKey, res, currentSession) {
       console.log("Pr verificado");
   }
   else{
+      console.log("Pr no verificado");
       return;
   }
 
@@ -241,6 +240,7 @@ function processMsg2(msg, privateKey, res, currentSession) {
             console.log(JSON.stringify(body));
 
             console.log("Clave publicada en la ttp");
+            return finalRes.status(200).send(body);
         });
     });
 
@@ -258,5 +258,6 @@ var getSessionFromUsername = function(username) {
 }
 
 module.exports = {
-  identityRequest
+  identityRequest,
+  identityRequest2
 }

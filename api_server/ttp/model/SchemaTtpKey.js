@@ -6,4 +6,4 @@ const TtpKeySchema =  new schema({
     key: String
 });
 
-module.exports = mongoose.model('TtpKeySchema', TtpKeySchema);
+module.exports = mongoose.model('TtpKey', TtpKeySchema);
