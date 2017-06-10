@@ -6,13 +6,12 @@ const mongoose = require('mongoose');
 var mongooseUniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
-const pollingStationSchema =  new Schema({
-    name: { type: String, unique: true },
-    key: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'keysModel'
-    }
+const candidateSchema =  new Schema({
+    sigla: { type: String, unique: true },
+    candidatos : [{
+        type: String
+    }]
 });
 
-pollingStationSchema.plugin(mongooseUniqueValidator);
-module.exports = mongoose.model('pollingStationModel', pollingStationSchema);
+candidateSchema.plugin(mongooseUniqueValidator);
+module.exports = mongoose.model('candidateModel', pollingStationSchema);

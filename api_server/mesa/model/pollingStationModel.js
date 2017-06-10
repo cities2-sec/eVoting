@@ -14,7 +14,8 @@ const pollingStationSchema =  new Schema({
     key: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'keysModel'
-    }
+    },
+    active: { type: Boolean}
 });
 
 pollingStationSchema.plugin(mongooseUniqueValidator);

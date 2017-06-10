@@ -30,6 +30,8 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 	$scope.userinfo =  {};
 	$scope.userKeys = {};
 	$scope.login = {};
+	$scope.election = {};
+	$scope.parties = {};
 
 	//ERROR MESSAGE
 	$scope.alertText ={};
@@ -37,6 +39,43 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 
 $scope.login.username = "47915398G";
 $scope.login.password = "pass";
+
+
+    $(function () {
+        $('.btn-radio').click(function(e) {
+            $('.btn-radio').not(this).removeClass('active')
+                .siblings('input').prop('checked',false)
+                .siblings('.img-radio').css('opacity','0.5');
+            $(this).addClass('active')
+                .siblings('input').prop('checked',true)
+                .siblings('.img-radio').css('opacity','1');
+        });
+    });
+
+
+//llamar function elections
+
+
+	// get parties
+    $scope.elections = function () {
+        $http.get('election/get_election')
+            .then(function successCallback(response){
+                if(response.status == 200){
+                    $scope.election=response.data;
+                    console.log($scope.election);
+                    $scope.parties = $scope.election[0].parties;
+                    console.log("ELECCIONES:" + $scope.parties);
+                    console.log($scope.parties);
+
+                }
+            },function errorCallback(response){
+                if(response.status == 500){
+                    console.log(response.data.message);
+                }
+
+            })
+    }
+    $scope.elections();
 
 	// Login NIF+pass
 	$scope.logIn = function (){
