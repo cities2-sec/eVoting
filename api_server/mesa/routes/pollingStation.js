@@ -6,11 +6,9 @@ const express = require('express');
 const pollingStation = require ('../controller/pollingStationCtrl');
 const api = express.Router();
 
-//api.post('/logIn', userCtrl.logIn);
-//api.post('/singIn', userCtrl.signIn);
-//api.get('/private', auth, userCtrl.authUser);
-
 api.get('/keys', pollingStation.getKeys);
-api.get('/results', pollingStation.getResults);
+api.get('/results/:name', pollingStation.getResults);
+api.delete('/stopvoting/:name', pollingStation.markVotingEnd);
+api.post('/startvoting', pollingStation.markVotingStart);
 
 module.exports = api;

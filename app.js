@@ -50,10 +50,10 @@ app.get('/censo/login', function (err, res) {
 app.get('/censo', function (err, res) {
 console.log("hola");
   //No authorization
-  //res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
+  res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
 
-  res.sendFile(__dirname + '/web/views/censo/censo.html'); //perfil censo
-})
+  //res.sendFile(__dirname + '/web/views/censo/censo.html'); //perfil censo
+});
 
 
 module.exports = app;

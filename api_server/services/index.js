@@ -61,7 +61,6 @@ function createKeys(req) {
     })
 }
 
-//var PollingStationKey = {};
 global.PollingStationKey = {};
 
 function createPollingStationKey() {
