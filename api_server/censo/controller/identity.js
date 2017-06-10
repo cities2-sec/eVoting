@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Keys = require('../../model/SchemaKeys');
 var bignum = require('bignum');
 var crypto = require('crypto');
+const http = require('http');
 
 
 var sessions = [];
@@ -138,19 +139,18 @@ function identityRequest(req, res) {
     */
 }
 
-
-
 function startNonRepudiation(msg, privateKey, res, currentSession) {
   //generar una clave simétrica
   var algorithm = 'aes256';
   var inputEncoding = 'utf8';
-  var keyBuf = crypto.randomBytes(256);
-  var key = keyBuf.toString('base64');
   var outputEncoding = 'hex';
+  var keyBuf = crypto.randomBytes(32);
+  var ivBuf = crypto.randomBytes(16);
+  var key = keyBuf.toString(outputEncoding)+"."+ivBuf.toString(outputEncoding);
 
   //enciptamos el mensaje con la clave generada
   console.log("Cifrando msg: "+msg+" con altorigmo: "+algorithm+ " y clave: "+key);
-  var cipher = crypto.createCipher(algorithm, key);
+  var cipher = crypto.createCipher(algorithm, keyBuf, ivBuf);
   var ciphered = cipher.update(msg, inputEncoding, outputEncoding);
   ciphered += cipher.final(outputEncoding);
 
@@ -171,6 +171,7 @@ function startNonRepudiation(msg, privateKey, res, currentSession) {
     "C": ciphered,
     "Po": signedPoHash
   }
+
   // Me guardo la C y la key para poder comprobar el Pr en el mensaje que me devolverá
   currentSession.C = ciphered;
   currentSession.key = key;
@@ -207,6 +208,43 @@ function processMsg2(msg, privateKey, res, currentSession) {
   }
 
   //Falta continuar enviando los datos a la ttp
+    var body = JSON.stringify({
+        "username": currentSession.username,
+        "key": currentSession.key
+    });
+
+    var options = {
+        hostname: 'localhost',
+        port: 8080,
+        path: '/ttp',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(body),
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNzYW50aTIiLCJpYXQiOjE0OTUyMDIxNjMsImV4cCI6MTQ5NjQxMTc2M30.B0vQlhKy7TOs4HGRardygVYFwnl_ziKaVmrSEpBoEfo"
+        }
+    };
+
+    var post_req = http.request(options, function (res) {
+        if(res.statusCode !== 200) {
+            console.log("Error al publicar key");
+            return;
+        }
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            var body = JSON.parse(Buffer.concat(chunks).toString());
+            console.log(JSON.stringify(body));
+
+            console.log("Clave publicada en la ttp");
+        });
+    });
+
+    post_req.end(body);
 }
 
 // Esta función busca en la lista de sesiones la correspondiente al usuario pasado por parámetros
