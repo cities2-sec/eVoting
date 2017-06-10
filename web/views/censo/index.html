@@ -26,7 +26,7 @@
 
 	<!-- WEB Desing -->
 	<link rel="stylesheet" href="/css/index.css">
-	<script src="/index.js"></script>
+	<script src="/views/censo/index.js"></script>
 
 	<!-- Controlers
 	<script src="/views/censo/index.js">
@@ -37,7 +37,6 @@
 
 <body ng-controller="mainController">
 
-
 	<div id="contenedor" class="container">
 		<div notifybar style="position:absolute;top:0;right:0"></div>
 
@@ -47,9 +46,8 @@
 		    <div class="navbar-header">
 		      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
 				</div>
+			</div>
 		</nav>
-
-
 
 		<div id="login-overlay" class="modal-dialog">
       <div class="modal-content">
@@ -79,71 +77,17 @@
                   <div class="col-xs-6">
                       <p class="lead">Información:</p>
                       <ul class="list-unstyled" style="line-height: 2">
-                          <li><span class="fa fa-check text-success"></span> Obtención de Identidad Anónima de votante</li>
+                          <li><span class="fa fa-check text-success"></span> Obtención de ID Anónima de votante</li>
                           <li><span class="fa fa-check text-success"></span> Obtención de credenciales</li>
-                          <li><span class="fa fa-check text-success"></span> Para más información contacte con el Ministerio</li>
+													<p>
+                          <li class="text-center" style="font-size: 10px"> Para más información contacte con el Ministerio</li>
                       </ul>
                   </div>
               </div>
           </div>
       </div>
   </div>
-
-
-
-
-
-
-<!-- Botons
-
-		<div idclass="row">
-			<div class="col-md-4 text-center">
-				<button id="censo" type="button" class="btn_index" href="#censo"></i></button>
-				<p> CENSO ELECTORAL </p>
-			</div>
-			<div class="col-md-4 text-center">
-				<button id="urna" type="button" class="btn_index"  href="urna.html"></i></button>
-				<p> URNA </p>
-			</div>
-			<div class="col-md-4 text-center">
-				<button id="mesa_electoral" type="button" class="btn_index"  href="melectoral.html"></button>
-				<p> MESA ELECTORAL </p>
-			</div>
-		</div>
- Botons -->
-
-		<div class="row">
-			<div class="panel panel-primary">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Censo</div>
-				<div class="panel-body">
-					<p>
-					<div class="col-sm-6 col-sm-offset-1 text-center">
-						<!--<button type="submit" class="btn btn-success btn-lg" ng-click="getCensoKeys()" >PedirClaves</button>-->
-						<button type="submit" class="btn btn-warning btn-lg" ng-click="createOurKey()">Create My Keys</button>
-						<p>
-						<button type="submit" class="btn btn-danger btn-lg" ng-click="getAnonimID()">Create Anonim ID</button>
-					</div>
-					</p>
-				</div>
-			</div>
-
-
-		<div class="panel panel-success">
-			<!-- Default panel contents -->
-			<div class="panel-heading">Urna</div>
-
-			<div class="col-sm-6 col-sm-offset-1">
-				<table class="table table-striped">
-					<tr ng-repeat="user in users" >
-						<td>{{ user }}</td>
-					</tr>
-				</table>
-			</div>
-		</div>
 	</div>
-	</div>
-
 
 </body>
 </html>

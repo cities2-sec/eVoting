@@ -6,6 +6,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const path = require("path");
+const auth = require('./api_server/middlewares/auth');
 
 // AllowCrossDomain Function
 const allowCrossDomain = function (req, res, next) {
@@ -43,5 +44,16 @@ app.use('/urna', urna);
 app.get('/', function (err, res) {
     res.send({message: 'Welcome to my API'});
 });
+app.get('/censo/login', function (err, res) {
+  res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
+});
+app.get('/censo', function (err, res) {
+console.log("hola");
+  //No authorization
+  //res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
+
+  res.sendFile(__dirname + '/web/views/censo/censo.html'); //perfil censo
+})
+
 
 module.exports = app;

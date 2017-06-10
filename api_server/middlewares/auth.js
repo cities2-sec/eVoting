@@ -7,7 +7,7 @@ const User = require('../censo/model/SchemaUser')
 
 function isAuth(req, res, next) {
     if(!req.headers.authorization){
-        return res.status(403).send({message: "ERROR: You are not allowed"});
+      return res.status(401).send({message: "ERROR: You are not allowed"});
     }
     const token = req.headers.authorization.split(' ')[1];
 
@@ -16,7 +16,7 @@ function isAuth(req, res, next) {
             var username = response;
             User.findOne({username: username}, function(err, user) {
                 if(err) {
-                    return res.status(500).json("Token not valid");
+                    return res.status(400).json({message:"Token not valid"});
                 }
                 req.user = user;
                 next();
@@ -24,7 +24,7 @@ function isAuth(req, res, next) {
 
         })
         .catch(function (response){
-            return res.sendStatus(500);
+            return res.status(500).json({message:"Invalid Token"});
         })
 }
 

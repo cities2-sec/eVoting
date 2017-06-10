@@ -20,7 +20,4 @@ api.post('/identity/request', auth, identityCtrl.identityRequest);
 api.get('/key', keyCtrl.getKey);
 
 
-//PRUEBAS
-api.post('/identity/request2', identityCtrl.identityRequest2);
-
 module.exports = api;

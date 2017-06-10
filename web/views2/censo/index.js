@@ -1,4 +1,4 @@
-angular.module('MainApp', ['ngRoute','ngStorage'])
+angular.module('CensoController', ['ngRoute','ngStorage'])
 
 .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider){
 	$locationProvider.html5Mode({
@@ -10,7 +10,7 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 		controller: 'mainController'
 	})
 	.when('/censo', {
-		templateUrl: 'views/censo/index.html',
+		templateUrl: '',
 		controller: 'censoController'
 	})
 	.when('/urna', {
