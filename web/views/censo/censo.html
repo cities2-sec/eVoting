@@ -35,7 +35,7 @@
 </head>
 <base href="/">
 
-<body ng-controller="mainController">
+<body ng-controller="censoController">
 
 
 	<div id="contenedor" class="container">
@@ -49,39 +49,53 @@
 				</div>
 		</nav>
 
+		<div class="container">
+		      <div class="row">
 
-		<div class="row">
-			<div class="panel panel-primary">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Censo</div>
-				<div class="panel-body">
-					<p>
-					<div class="col-sm-6 col-sm-offset-1 text-center">
-						<!--<button type="submit" class="btn btn-success btn-lg" ng-click="getCensoKeys()" >PedirClaves</button>-->
-						<button type="submit" class="btn btn-warning btn-lg" ng-click="createOurKey()">Create My Keys</button>
-						<p>
-						<button type="submit" class="btn btn-danger btn-lg" ng-click="getAnonimID()">Create Anonim ID</button>
-					</div>
-					</p>
-				</div>
-			</div>
+		        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
 
 
-		<div class="panel panel-success">
-			<!-- Default panel contents -->
-			<div class="panel-heading">Urna</div>
+		          <div class="panel panel-info">
+		            <div class="panel-heading">
+		              <h4 class="modal-title" id="myModalLabel">Datos del Censo Electoral</h4>
+		            </div>
+		            <div class="panel-body">
+		              <div class="row">
+		                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User" src="/img/perfil.png" class="img-circle img-responsive"> </div>
 
-			<div class="col-sm-6 col-sm-offset-1">
-				<table class="table table-striped">
-					<tr ng-repeat="user in users" >
-						<td>{{ user }}</td>
-					</tr>
-				</table>
-			</div>
-		</div>
+		                <div class=" col-md-9 col-lg-9 ">
+		                  <table class="table table-user-information">
+												 <tbody  ng-repeat="user in userinfo">
+															<tr>
+	 		                         <td><strong>Name:</strong></td>
+	 		                         <td>{{user.displayName}}</td>
+	 		                       </tr>
+														 <tr>
+			                         <td><strong>DNI:</strong></td>
+			                         <td>{{user.username}}</td>
+			                       </tr>
+														 <tr>
+			                         <td><strong>Email:</strong></td>
+			                         <td>{{user.email}}</td>
+			                       </tr>
+														 <tr>
+			                         <td><strong>Petición ID Anónima</strong></td>
+			                         <td>{{user.identityGivenDate}}</td>
+			                       </tr>
+		                    </tbody>
+		                  </table>
+											<div align = "center">
+		                  <button  class="btn btn-warning "ng-click="createOurKey()" ng-show="!userinfo.user.identityGivenDate">Creat Crear Claves</button>
+											<button  class="btn btn-danger "ng-click="getAnonimID()" ng-disabled="!id_request">Petición ID Anónima</button>
+											</div>
+		                </div>
+		              </div>
+		            </div>
+
+		          </div>
+		        </div>
+		      </div>
+		    </div>
 	</div>
-	</div>
-
-
 </body>
 </html>
