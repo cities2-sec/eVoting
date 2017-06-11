@@ -28,7 +28,8 @@
     "ngstorage": "^0.3.11",
     "js-sha512": "^0.3.0",
     "angular-file-upload": "^2.5.0",
-    "angular-chart.js": "^1.1.1"
+    "angular-chart.js": "^1.1.1",
+    "chart.js": "^2.6.0"
   },
   "resolutions": {
     "polymer": "^1.9.1",
