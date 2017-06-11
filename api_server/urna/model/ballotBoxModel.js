@@ -12,7 +12,19 @@ const schema = mongoose.Schema;
 const ballotBoxSchema =  new schema({
     id_anomin: String,
     voted: Boolean,
+    numOfVotes: Number,
     timestamp: Date,
+    cipher: {
+        n: {
+            type: Number
+        },
+        lambda: {
+            type: Number
+        },
+        mu: {
+            type: Number
+        }
+    },
     votes: [{type: String
     }]
 });
