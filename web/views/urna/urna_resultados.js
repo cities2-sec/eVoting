@@ -3,7 +3,7 @@ angular.module('MainApp', ['ngStorage','chart.js'])
 .controller('urnaController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
 
 	$scope.election = {};
-  $scope.file_id={};
+  	$scope.file_id={};
 
 
   $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
@@ -49,7 +49,7 @@ angular.module('MainApp', ['ngStorage','chart.js'])
 		});
 	}
 
-	$scope.getresuts();
+	//$scope.get_results();
 
 
 
