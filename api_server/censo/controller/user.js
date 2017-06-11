@@ -65,6 +65,33 @@ function authUser(req, res) {
     res.status(200).send({message: "You have access"})
 }
 
+
+function getUser (req, res){
+
+  User.findOne({ _id: req.params._id }, function(err, user){
+      if(err){
+          return res.status(500).json({message: `Error on the petition: ${err}`});
+      }
+      if (!user){
+          return res.status(404).send({message: "User doesn't exists"})
+      }
+      if(user){
+        const userinfo = {
+            username: user.username,
+            displayName: user.displayName,
+            email: user.email,
+            _id: user._id,
+            identityGivenDate: user.identityGivenDate,
+            
+        };
+        console.log(userinfo);
+        res.status(200).send({
+            user:userinfo
+        });
+      }
+  })
+}
+
 function censoStats(req, res) {
     // Devuelve información sobre el estado de las votaciones
     var censo = 0; // Nº de usuarios en el censo
@@ -98,5 +125,6 @@ module.exports = {
     login,
     register,
     authUser,
-    censoStats
+    censoStats,
+    getUser
 }

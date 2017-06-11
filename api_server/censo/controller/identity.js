@@ -46,7 +46,7 @@ function identityRequest(req, res) {
                   // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
                   var user_update = {
                     identityGivenDate: Date.now(),
-                    anonim_id: signedMsg
+                    anonim_id: signedMsg,
                   }
 
                   User.update({_id: req.body._id}, user_update,function(err, user){
@@ -55,7 +55,7 @@ function identityRequest(req, res) {
                               return res.status(500).json("Server error");
                           }
                           else{
-                            res.status(200).send({anonim_id: signedMsg});
+                            res.status(200).send({anonim_id: signedMsg, identityGivenDate: user_update.identityGivenDate});
                           }
 /*
                           // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo

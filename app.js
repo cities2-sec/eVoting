@@ -27,6 +27,7 @@ const allowCrossDomain = function (req, res, next) {
 const censo = require('./api_server/censo/routes/censo');
 const mesa = require ('./api_server/mesa/routes/pollingStation');
 const urna = require ('./api_server/urna/routes/ballotBox');
+const election = require('./api_server/elections/routes/electionroute');
 
 /* App */
 app.use(allowCrossDomain);
@@ -39,6 +40,8 @@ app.use(bodyParser.json());
 app.use('/censo', censo);
 app.use('/mesa', mesa);
 app.use('/urna', urna);
+app.use('/election', election);
+
 
 
 app.get('/', function (err, res) {
@@ -48,11 +51,11 @@ app.get('/censo/login', function (err, res) {
   res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
 });
 app.get('/censo', function (err, res) {
-console.log("hola");
-  //No authorization
-  res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
-
-  //res.sendFile(__dirname + '/web/views/censo/censo.html'); //perfil censo
+  res.sendFile(__dirname + '/web/views/censo/censo.html'); //login censo
+});
+app.get('/urna', function (err, res) {
+  console.log(res);
+  res.sendFile(__dirname + '/web/views/urna/urna.html'); //login censo
 });
 
 

@@ -14,6 +14,8 @@ api.post('/login', userCtrl.login);
 api.post('/signin', userCtrl.register);
 api.get('/private', auth, userCtrl.authUser);
 api.get('/stats', userCtrl.censoStats);
+api.get('/user/:_id', auth, userCtrl.getUser);// Comprobar qe es el mismo usuario
+
 //identityCtrl
 api.post('/identity/request', auth, identityCtrl.identityRequest);
 //keyCtrl
