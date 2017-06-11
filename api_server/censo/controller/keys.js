@@ -12,7 +12,7 @@ function getKey (req, res){
       return res.status(404).send({message: `Key does not exist`});
     }
     else{
-      res.status(200).send({publicKey : key.publicKey, privateKey: key.privateKey});
+      res.status(200).send({publicKey : key.publicKey});
     }
   })
 }

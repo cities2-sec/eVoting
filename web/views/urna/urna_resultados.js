@@ -6,7 +6,6 @@ angular.module('MainApp', ['ngStorage','chart.js'])
   $scope.file_id={};
 
 
-
   $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
   $scope.data = [333, 500, 100];
   $scope.colors = ["#800080",
@@ -14,9 +13,7 @@ angular.module('MainApp', ['ngStorage','chart.js'])
               "#ff0000"];
 
 
-
-
-  window.onload = function() {
+	$scope.fileread = function(){
 		var fileInput = document.getElementById('fileInput');
 
 		fileInput.addEventListener('change', function(e) {
@@ -25,14 +22,35 @@ angular.module('MainApp', ['ngStorage','chart.js'])
 			if (file.type.match(textType)) {
 				var reader = new FileReader();
 				reader.onload = function(e) {
-          console.log(reader.result);
-          $scope.file_id.id = reader.result;
-          console.log(  $scope.file_id.id );;
+					$scope.file_id.id = reader.result;
+					console.log($scope.file_id.id );;
 				}
 				reader.readAsText(file);
 			} else {
 			}
 		});
-}
+	}
+
+	$scope.get_results = function(){
+		var fileInput = document.getElementById('fileInput');
+
+		fileInput.addEventListener('change', function(e) {
+			var file = fileInput.files[0];
+			var textType = /text.*/;
+			if (file.type.match(textType)) {
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					$scope.file_id.id = reader.result;
+					console.log($scope.file_id.id );;
+				}
+				reader.readAsText(file);
+			} else {
+			}
+		});
+	}
+
+	$scope.getresuts();
+
+
 
 });
