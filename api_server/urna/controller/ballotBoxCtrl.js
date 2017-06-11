@@ -43,6 +43,41 @@ function base64ToHex(str) {
     return hex.join(" ");
 }
 
+function encryptVotebyPaillier(vote){
+
+    var p = bignum.prime(this.bitlength / 2);
+    var q;
+    do {
+        q = bignum.prime(this.bitlength / 2);
+    } while (q.cmp(p) === 0 && q.gcd(p) === 1);
+    var n = p.mul(q);
+    var lambda = calculateLambda(p,q);
+    var g = generateG(lambda,n);
+    var mu = generateMu(lambda, g, n);
+    var cryptogram = bignum(g);
+
+
+    function calculateLambda (p, q){
+
+        var resultado_f1 = bignum(p).sub(1).mul(bignum(q).sub(1));
+        var resultado = bignum(resultado_f1).div(bignum(p).sub(1).gcd(bignum(q).sub(1)));
+        return resultado;
+    }
+
+    function generateG(lambda, n) {
+        return 6497955158;
+    }
+
+    function generateMu (lambda, g, n){
+
+        var resultado_f1 = bignum(g).pow(bignum(lambda)).mod(bignum(n).pow(2)).sub(bignum('1').div(bignum(n)));
+        var resultado = resultado_f1.mod(bignum(n));
+        return resultado;
+    }
+
+    return cryptogram;
+}
+
 
 
 function toVote(req, res){
