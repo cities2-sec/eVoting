@@ -26,6 +26,9 @@
     "angular-notify": "^2.5.1",
     "ngstorage": "^0.3.11",
     "js-sha512": "^0.3.0",
-    "polymer": "^2.0.1"
+    "polymer": "^2.0.1",
+    "angular-file-upload": "^2.5.0",
+    "angular-chart.js": "^1.1.1",
+    "chart.js": "^2.6.0"
   }
 }

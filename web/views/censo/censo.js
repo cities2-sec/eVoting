@@ -30,16 +30,22 @@ angular.module('MainApp', ['ngStorage'])
 				console.log('Error: ' + response.data.message);
 				//$http.get('censo/login');
 				$window.location.href = "/censo/login";
+				$localStorage.token = {};
+				$localStorage._id  = {};
 			}
 			if(response.status == 401){ // Unauthorized
 				console.log('Error: ' + response.data.message);
 				//$http.get('censo/login');
 				$window.location.href = "/censo/login";
+				$localStorage.token = {};
+				$localStorage._id  = {};
 			}
 			if(response.status == 500){ //USER DOESN'T EXIST
 				console.log('Error: ' + response.data.message);
 				//$http.get('censo/login');
 				$window.location.href = "/censo/login";
+				$localStorage.token = {};
+				$localStorage._id  = {};
 			}
 		})
 	}
@@ -211,7 +217,7 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.userinfo=response.data;
-				console.log("hol"+$scope.userinfo.user.identityGivenDate);
+				console.log("IdentityGivenDate: "+$scope.userinfo.user.identityGivenDate);
 				if($scope.userinfo.user.identityGivenDate){
 					$scope.id_request = true;
 				}
@@ -224,6 +230,10 @@ angular.module('MainApp', ['ngStorage'])
 			}
 			if(response.status == 404){
 				console.log('Error: ' + response.data.message);
+				$window.location.href = "/censo/login";
+				$localStorage.token = {};
+				$localStorage._id  = {};
+
 			}
 		})
 
