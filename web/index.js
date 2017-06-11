@@ -42,10 +42,10 @@ $scope.login.password = "pass";
 	$scope.logIn = function (){
 		$scope.login.username = $scope.login.username.toUpperCase();
 		var nif = $scope.nif($scope.login.username);
-		if (nif == 0){
+		if (nif === 0){
 			$http.post('censo/login', $scope.login)
 			.then(function successCallback(response){
-				if(response.status == 200){
+				if(response.status === 200){
 					$localStorage.token = response.data.token;
 					$localStorage._id = response.data.user._id;
 					$scope.userinfo = response.data.user;
@@ -56,22 +56,22 @@ $scope.login.password = "pass";
 
 				}
 			},function errorCallback(response){
-				if(response.status == 400){ // Falta el USuario o Contraseña
+				if(response.status === 400){ // Falta el USuario o Contraseña
 					console.log('Error: ' + response.data.message);
 					$scope.alertText =response.data.message;
 					$scope.showAlert = true;
 				}
-				if(response.status == 401){ // Usuario o Contraseña incorrecto
+				if(response.status === 401){ // Usuario o Contraseña incorrecto
 					console.log('Error: ' + response.data.message);
 					$scope.alertText =response.data.message;
 					$scope.showAlert = true;
 				}
-				if(response.status == 404){ //USER DOESN'T EXIST
+				if(response.status === 404){ //USER DOESN'T EXIST
 					console.log('Error: ' + response.data.message);
 					$scope.alertText =response.data.message;
 					$scope.showAlert = true;
 				}
-				if(response.status == 500){ //SERVER ERROR
+				if(response.status === 500){ //SERVER ERROR
 					console.log(response.data.message);
 					$scope.alertText =response.data.message;
 					$scope.showAlert = true;
@@ -79,20 +79,20 @@ $scope.login.password = "pass";
 
 			})
 		}
-	}
+	};
 	// Check NIF
 	$scope.nif = function(dni){
-		var number, word, words, regular_expression_nif
+		var number, word, words, regular_expression_nif;
 
 		regular_expression_nif = /^\d{8}[A-Z]$/;
 
-		if(regular_expression_nif.test (dni) == true){
+		if(regular_expression_nif.test (dni) === true){
 			 number = dni.substr(0,dni.length-1);
 			 word = dni.substr(dni.length-1,1);
 			 number = number % 23;
 			 words='TRWAGMYFPDXBNJZSQVHLCKET';
 			 words=words.substring(number,number+1);
-			if (words!=word.toUpperCase()) {
+			if (words!==word.toUpperCase()) {
 				$scope.alertText = "DNI Incorrecto";
 				$scope.showAlert = true;
 				 return "NIF incorrect";
@@ -111,15 +111,15 @@ $scope.login.password = "pass";
 		console.log(pKey);
 		var a = [];
 		do { a.push(sKey.substring(0,47))}
-		while((sKey = sKey.substring(47,sKey.length)) != "");
+		while((sKey = sKey.substring(47,sKey.length)) !== "");
 		var privateKey = a.toString().split(",").join("\n");
 		var a = [];
 		do { a.push(pKey.substring(0,47))}
-		while((pKey = pKey.substring(47,pKey.length)) != "");
+		while((pKey = pKey.substring(47,pKey.length)) !== "");
 		var publicKey = a.toString().split(",").join("\n");
 		var a = [];
 		do { a.push(nKey.substring(0,47))}
-		while((pKey = nKey.substring(47,nKey.length)) != "");
+		while((pKey = nKey.substring(47,nKey.length)) !== "");
 		var publicKey_n = a.toString().split(",").join("\n");
 
 		var blob = new Blob([
@@ -142,20 +142,20 @@ $scope.login.password = "pass";
 		var pKey = userKeys.privateKey.publicKey.e.toString();
 		var nKey = userKeys.privateKey.publicKey.n.toString();
 		$scope.fileKeys(sKey, pKey, nKey);
-	}
+	};
 	//GET keys from CENSO
 	$scope.getCensoKeys = function(){
 		$http.get('/censo/key')
 		.then(function successCallback(response){
-			if(response.status == 200){
+			if(response.status === 200){
 				$scope.censoKeys=response.data;
 				console.log($scope.censoKeys);
 			}
 		},function errorCallback(response){
-			if(response.status == 500){
+			if(response.status === 500){
 				console.log(response.data.message);
 			}
-			if(response.status == 404){
+			if(response.status === 404){
 				console.log('Error: ' + response.data.message);
 			}
 		})
@@ -233,7 +233,7 @@ $scope.login.password = "pass";
 
 
 		})
-	}
+	};
 
 	$scope.getCensoKeys();
 });
