@@ -1,0 +1,95 @@
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="MainApp">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="/img/hearticon.png" type="image/x-icon" >
+	<title class="love" style="color:#ff6032">eVoting</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<!-- JavaScript -->
+	<script src="/bower_components/angular/angular.min.js"></script>							<!-- Angular -->
+	<script src="/bower_components/angular-route/angular-route.min.js"></script>
+	<script src="/bower_components/ngstorage/ngStorage.min.js"></script>
+  <script src="/bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
+  <script src="/bower_components/chart.js/dist/Chart.min.js"></script>
+  <script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
+
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>						<!-- Jquery -->
+	<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>	<!-- Boostrap -->
+	<script src="/bower_components/big-integer/BigInteger.min.js"></script>				<!-- BigInteger -->
+	<script src="/bower_components/file-saver/FileSaver.min.js"></script>					<!-- File Saver -->
+
+	<!-- Own scripts -->
+	<script src="/scripts/big-integer-extended.js" type="text/javascript"></script>
+	<script src="/scripts/rsa-big-integer.js" type="text/javascript"></script>
+
+	<!-- WEB Desing -->
+	<link rel="stylesheet" href="/css/index.css">
+	<script src="/views/urna/urna_resultados.js"></script>
+
+	<!-- Controlers
+	<script src="/views/censo/index.js">
+	-->
+
+</head>
+<base href="/">
+
+<body ng-controller="urnaController">
+	<div id="contenedor" class="container">
+
+<!-- NAV BAR -->
+		<nav id="cabecera" class="navbar navbar-default">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
+				</div>
+			</div>
+		</nav>
+
+    <div class="container">
+      <div class="panel-heading">
+        <h3 class="modal-title" id="myModalLabel">Resultado de las elecciones</h3>
+      </div>
+
+
+      <h4>Añadir Identidad Anónima:</h4>
+                <form id="js-upload-form">
+                  <div class="form-inline">
+                    <div class="form-group">
+                      <input type="file" id="fileInput"></div>
+                    </div>
+                  </div>
+                </form>
+      <input type="text" class="form-control input-lg text-left" placeholder="{{file_id.id}}" ng-disabled="true">
+      <br>
+
+
+
+		<div class="row">
+      <div class="col-sm-7">
+        <table class="table table-striped">
+					<tr class="info  text-center">
+						<td>Id Anonimo</td>
+						<td>Voto</td>
+					</tr>
+					<tr class="text-center" ng-repeat="adsfasdf in asdfaf | filter:file_id.id">
+						<td>{{film.id}}</td>
+						<td>{{film.voto}}</td>
+          </tr>
+				</table>
+			</div>
+			<div class="col-sm-5 text-center">
+				<form name="myForm">
+          <canvas id="pie" class="chart chart-pie" chart-data="data" chart-labels="labels" chart-options="options">
+          </canvas>
+				</form>
+			</div>
+		</div>
+  </div>
+</body>
+</html>

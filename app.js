@@ -54,8 +54,10 @@ app.get('/censo', function (err, res) {
   res.sendFile(__dirname + '/web/views/censo/censo.html'); //login censo
 });
 app.get('/urna', function (err, res) {
-  console.log(res);
   res.sendFile(__dirname + '/web/views/urna/urna.html'); //login censo
+});
+app.get('/urna/resultados', function (err, res) {
+  res.sendFile(__dirname + '/web/views/urna/urna_resultados.html'); //login censo
 });
 
 
