@@ -1,7 +1,7 @@
 /**
  * Created by VictorMiranda on 03/02/2017.
  */
-var $ = require('jquery');
+//var $ = require('jquery');
 const PollingStation = require('../model/pollingStationModel');
 const service = require('../../services');
 var bignum = require('bignum');
@@ -36,6 +36,10 @@ function getResults(req, res) {
         // Función para contar los votos
         // Tres partidos
         // Población de 10 personas
+
+        /*
+         http://security.hsr.ch/msevote/seminar-papers/HS09_Homomorphic_Tallying_with_Paillier.pdf
+         */
 
         var producto = 1;
         var n2=bignum(n).pow(2);

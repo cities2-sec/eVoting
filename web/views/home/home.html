@@ -14,10 +14,6 @@
 	<script src="/bower_components/angular/angular.min.js"></script>							<!-- Angular -->
 	<script src="/bower_components/angular-route/angular-route.min.js"></script>
 	<script src="/bower_components/ngstorage/ngStorage.min.js"></script>
-  <script src="/bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
-  <script src="/bower_components/chart.js/dist/Chart.min.js"></script>
-  <script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-
 
 	<script src="/bower_components/jquery/dist/jquery.min.js"></script>						<!-- Jquery -->
 	<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>	<!-- Boostrap -->
@@ -30,7 +26,7 @@
 
 	<!-- WEB Desing -->
 	<link rel="stylesheet" href="/css/index.css">
-	<script src="/views/urna/urna_resultados.js"></script>
+	<script src="/views/home/home.js"></script>
 
 	<!-- Controlers
 	<script src="/views/censo/index.js">
@@ -39,8 +35,10 @@
 </head>
 <base href="/">
 
-<body ng-controller="urnaController">
+<body ng-controller="homeController">
+
 	<div id="contenedor" class="container">
+		<div notifybar style="position:absolute;top:0;right:0"></div>
 
 <!-- NAV BAR -->
 		<nav id="cabecera" class="navbar navbar-default">
@@ -51,44 +49,7 @@
 			</div>
 		</nav>
 
-    <div class="container">
-      <div class="panel-heading">
-        <h3 class="modal-title" id="myModalLabel">Resultado de las elecciones</h3>
-      </div>
 
-
-      <h4>Añadir Identidad Anónima:</h4>
-                <form id="js-upload-form">
-                  <div class="form-inline">
-                    <div class="form-group">
-                      <input type="file" id="fileInput"></div>
-                    </div>
-                  </div>
-                </form>
-      <input type="text" class="form-control input-lg text-left" placeholder="{{file_id.id}}" ng-disabled="true">
-      <br>
-
-
-
-		<div class="row">
-      <div class="col-sm-7">
-        <table class="table table-striped">
-					<tr class="info  text-center">
-						<td>Id Anonimo</td>
-						<td>Voto</td>
-					</tr>
-					<tr class="text-center" ng-repeat="adsfasdf in asdfaf | filter:file_id.id">
-						<td>{{film.id}}</td>
-						<td>{{film.voto}}</td>
-          </tr>
-				</table>
-			</div>
-			<div class="col-sm-5 text-center">
-				<form name="myForm">
-          <canvas id="pie" class="chart chart-pie"chart-data="data" chart-labels="labels"  chart-colors="colors"></canvas>
-				</form>
-			</div>
-		</div>
-  </div>
+	</div>
 </body>
 </html>

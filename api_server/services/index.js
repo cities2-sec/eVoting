@@ -3,6 +3,7 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const bignum = require('bignum');
 const secrets = require('secrets.js');
+const fs = require('fs');
 
 /* Routes*/
 const config = require('../../config');
@@ -61,63 +62,58 @@ function createKeys(req) {
     })
 }
 
-global.PollingStationKey = {};
 
-function createPollingStationKey() {
-    var req = "mesa";
-    var key={};
-    Keys.findOne({keytype: req}, function (err, clave) {
-        if (err) {
-            console.log(`ERROR: Petitions doesn't do: ${err}`);
-            return err;
-        }
-        if (clave) {
-            console.log(`Keys existed for ${req} `);
-            global.PollingStationKey = clave;
-            return clave;
-        }
-        else {
-            console.log(`ERROR: Doesn't exist the keys for ${req} `);
-            var bitslength = config.bitslength;
-            var keys = new rsa.generateKeys(bitslength);
-            createSecretSharing(keys);
-            Keys.remove({keytype: req}, function (err) {
-                if (err)
-                    res.send(err);
-            });
-            key = new Keys({
-                keytype: req,
-                publicKey: {
-                    e: keys.publicKey.e,
-                    n: keys.publicKey.n,
-                    bits: keys.publicKey.bits,
-                }
-            });
-            global.PollingStationKey = key;
-            key.save(function (err) {
-                if (err) {
-                    console.log(`ERROR: Not saved in Database: ${err}`);
-                    return;
-                }
-                else {
-                    console.log(`Stored the keys for ${req}`);
-                    return;
-                }
-            })
-        }
-    });
-    return key;
-}
+function createSecretSharing(req, callback){
+  var bitslength = config.bitslength;
+  console.log("\n*************SHARING KEYS*************");
 
-function createSecretSharing(clave) {
-    /* MESA */
-    console.log("\n*************PRUEBA SHARING KEYS*************");
-    var shares = secrets.share(clave.privateKey.p.toString(), 4, 3);
-    console.log("Share Sharing Keys\n" + shares);
-    var comb = secrets.combine(shares.slice(0, 3));
-    console.log("The combination of 3 of 4 is correct?");
-    console.log(comb == clave.privateKey.p.toString());
-    console.log("*********************************************\n");
+  Keys.findOne({keytype: req}, function (err, key) {
+      if (err) {
+          console.log(`ERROR: Petitions doesn't do: ${err}`);
+          callback(0);
+      }
+      if (key) {
+          console.log(`Keys existed for ${req} `);
+          callback(1);
+      }
+      else {
+      var keys = new rsa.generateKeys(bitslength);
+      var shares = secrets.share(keys.privateKey.p.toString(),4,3);
+/*
+      for(var i=0;i<shares.length;i++){
+        fs.writeFileSync('services.txt', shares[i] , 'utf-8');
+        fs.writeFile("services.txt", shares[i], function(err) {
+          if(err) {
+              return console.log(err);
+          }
+          console.log(`The shared key # ${i} was saved!`);
+        })
+      }
+  */
+      console.log("Share Sharing Keys\n"+ shares);
+      var comb = secrets.combine(shares.slice(0,3));
+      console.log("The combination of 3 of 4 is correct?");
+      console.log( comb==keys.privateKey.p.toString());
+      console.log("*********************************************\n");
+      console.log("\n****************SHARING KEYS***************");
+      var keys = null;
+
+          var key = new Keys({
+              keytype: req
+          });
+          key.save(function (err, KeyStored) {
+              if (err) {
+                  console.log(`ERROR: Not saved in Database: ${err}`);
+                  callback(0);
+              }
+              else {
+                  console.log(`Stored the keys for ${req}`);
+                  callback(shares);
+              }
+          })
+      }
+  })
+
 }
 
 function createToken(user) {
@@ -156,6 +152,5 @@ module.exports = {
     createToken,
     decodeToken,
     createKeys,
-    createPollingStationKey,
-    PollingStationKey
+    createSecretSharing
 }

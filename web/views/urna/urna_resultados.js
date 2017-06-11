@@ -5,8 +5,13 @@ angular.module('MainApp', ['ngStorage','chart.js'])
 	$scope.election = {};
   $scope.file_id={};
 
+
+
   $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
-  $scope.data = [300, 500, 100];
+  $scope.data = [333, 500, 100];
+  $scope.colors = ["#800080",
+              "#0000ff",
+              "#ff0000"];
 
 
 
