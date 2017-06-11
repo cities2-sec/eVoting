@@ -37,6 +37,10 @@ function getResults(req, res) {
         // Tres partidos
         // Población de 10 personas
 
+        /*
+         http://security.hsr.ch/msevote/seminar-papers/HS09_Homomorphic_Tallying_with_Paillier.pdf
+         */
+
         var producto = 1;
         var n2=bignum(n).pow(2);
 
