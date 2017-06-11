@@ -1,7 +1,7 @@
 /**
  * Created by VictorMiranda on 03/02/2017.
  */
-//var $ = require('jquery');
+var $ = require('jquery');
 const PollingStation = require('../model/pollingStationModel');
 const service = require('../../services');
 var bignum = require('bignum');
