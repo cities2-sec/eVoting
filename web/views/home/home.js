@@ -2,6 +2,39 @@ angular.module('MainApp', ['ngStorage'])
 
 .controller('homeController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
 
+
+	$scope.choicesA = [{id: '0'}];
+	$scope.shared_files = {};
+
+	  $scope.addNewChoice = function() {
+	    var newItemNo = $scope.choicesA.length;
+	    $scope.choicesA.push({'id':newItemNo});
+	  };
+
+	  $scope.removeChoice = function() {
+	    var lastItem = $scope.choicesA.length-1;
+	    $scope.choicesA.splice(lastItem);
+	  };
+
+		$scope.fileread = function(id){
+			var fileInput = document.getElementById(id);
+
+			fileInput.addEventListener('change', function(e) {
+				var file = fileInput.files[0];
+				var textType = /text.*/;
+				if (file.type.match(textType)) {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						$scope.shared_files[id]= reader.result;
+						console.log($scope.shared_files);;
+					}
+					reader.readAsText(file);
+				} else {
+				}
+			});
+		}
+
+
 	$scope.fileKey = function(sharedkeys){
 		for(i=0; i<sharedkeys.length;i++){
 			var sharedkey = sharedkeys[i];
@@ -34,5 +67,5 @@ angular.module('MainApp', ['ngStorage'])
 		})
 	}
 
-	$scope.get_shared_keys();
+	//$scope.get_shared_keys();
 });

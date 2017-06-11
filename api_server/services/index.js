@@ -96,11 +96,16 @@ function createSecretSharing(req, callback){
       console.log( comb==keys.privateKey.p.toString());
       console.log("*********************************************\n");
       console.log("\n****************SHARING KEYS***************");
-      var keys = null;
 
           var key = new Keys({
-              keytype: req
+            keytype: req,
+            publicKey: {
+                e: keys.publicKey.e,
+                n: keys.publicKey.n,
+                bits: keys.publicKey.bits,
+            },
           });
+          var keys = null;
           key.save(function (err, KeyStored) {
               if (err) {
                   console.log(`ERROR: Not saved in Database: ${err}`);

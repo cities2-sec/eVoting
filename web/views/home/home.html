@@ -50,6 +50,17 @@
 		</nav>
 
 
+		<div>
+		   <fieldset  data-ng-repeat="choice in choicesA">
+				   <input type="file" id="{{choice.id}}" ng-click ="fileread(choice.id)"></div>
+		         <button class="addfields" ng-click="addNewChoice()">Añadir más claves</button>
+						 <a type="button" class="btn btn-sm btn-danger" ng-click="removeChoice()"><i class="glyphicon glyphicon-remove"></i></a>
+		   </fieldset>
+
+		</div>
+
+
+
 	</div>
 </body>
 </html>

@@ -1,5 +1,5 @@
 
-const Election = require('../model/ElectionSchema');
+const Election = require('../model/SchemaElection');
 const service = require('../../services');
 //const sha512 = require('js-sha512');
 const bcrypt = require('bcrypt-nodejs');

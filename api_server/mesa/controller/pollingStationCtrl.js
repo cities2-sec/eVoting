@@ -3,11 +3,22 @@
  */
 //var $ = require('jquery');
 const PollingStation = require('../model/pollingStationModel');
+const Keys = require('../../model/SchemaKeys');
 const service = require('../../services');
 var bignum = require('bignum');
 
 function getKeys(res) {
-    return res.json({keys: global.PollingStationKey});
+  Keys.findOne({ keytype: "melectoral" }, function (err, key){
+    if(err){
+      return res.status(500).send({message: `Error on the petition: ${err}`});
+    }
+    if(!key){
+      return res.status(404).send({message: `Key does not exist`});
+    }
+    else{
+      res.status(200).send({publicKey : key.publicKey});
+    }
+  })
 }
 
 function getResults(req, res) {

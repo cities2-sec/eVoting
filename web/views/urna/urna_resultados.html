@@ -61,7 +61,8 @@
                 <form id="js-upload-form">
                   <div class="form-inline">
                     <div class="form-group">
-                      <input type="file" id="fileInput"></div>
+                      <!--<input type="file" id="fileInput"></div>-->
+											 <input type="file" id="fileInput" ng-click ="fileread()"></div>
                     </div>
                   </div>
                 </form>
@@ -77,9 +78,9 @@
 						<td>Id Anonimo</td>
 						<td>Voto</td>
 					</tr>
-					<tr class="text-center" ng-repeat="adsfasdf in asdfaf | filter:file_id.id">
-						<td>{{film.id}}</td>
-						<td>{{film.voto}}</td>
+					<tr class="text-center" ng-repeat="voto in votos | filter:file_id.id">
+						<td>{{voto.id}}</td>
+						<td>{{voto.voto}}</td>
           </tr>
 				</table>
 			</div>

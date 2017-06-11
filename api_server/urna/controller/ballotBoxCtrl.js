@@ -1,6 +1,8 @@
 /**
  * Created by VictorMiranda on 03/02/2017.
  */
+
+const ballotBoxModel = require('../model/SchemaBallotBox');
 var express = require('express');
 var router = express.Router();
 
@@ -11,7 +13,7 @@ var rsa = require('../../module/rsa');
 var bignum = require('bignum');
 var CryptoJS = require('crypto');
 
-const BallotBox = require('../model/ballotBoxModel');
+const BallotBox = require('../model/SchemaBallotBox');
 const service = require('../../services');
 
 
@@ -78,8 +80,27 @@ function encryptVotebyPaillier(vote){
     return cryptogram;
 }
 
+function toVote (req, res){
 
+       var voto = req.body.voto
 
+        var sp = voto.split("%");
+       var partyid = sp[0];
+       var id = sp[1];
+       var pk = sp[2];
+
+       //busca por la id_anonim si esta en la BD
+
+        //si lo es desencriptamos con la publica del usuario
+
+    console.log("Voto BD:");
+    console.log(sp[0]);
+    console.log(sp[1]);
+    console.log(sp[2]);
+
+}
+
+/*
 function toVote(req, res){
     //me deben mandar el voto firmado q ya contiene el voto encriptado, la id_anonima, Kcenso
 
@@ -96,7 +117,7 @@ function toVote(req, res){
 
     return null;
 }
-
+*/
 //mis funciones
 function verificar(voto_firmado_encriptado, Kcenso){
 
