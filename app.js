@@ -51,11 +51,11 @@ app.get('/censo/login', function (err, res) {
   res.sendFile(__dirname + '/web/views/censo/index.html'); //login censo
 });
 app.get('/censo', function (err, res) {
-console.log("hola");
-  //No authorization
   res.sendFile(__dirname + '/web/views/censo/censo.html'); //login censo
-
-  //res.sendFile(__dirname + '/web/views/censo/censo.html'); //perfil censo
+});
+app.get('/urna', function (err, res) {
+  console.log(res);
+  res.sendFile(__dirname + '/web/views/urna/urna.html'); //login censo
 });
 
 

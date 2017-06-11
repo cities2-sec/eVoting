@@ -45,7 +45,7 @@ angular.module('MainApp', ['ngStorage'])
 	}
 	// Create File from Keys
 	$scope.fileKeys = function(sKey,pKey,nKey){
-		console.log(sKey);
+		console.log("skey"+sKey);
 		console.log(pKey);
 		var a = [];
 		do { a.push(sKey.substring(0,47))}
@@ -70,6 +70,22 @@ angular.module('MainApp', ['ngStorage'])
 		],
 		{type: "text/plain;charset=utf-8"});
 		saveAs(blob, "MyKeys.txt");
+	}
+	$scope.fileID = function(aid){
+		console.log(aid);
+
+		var a = [];
+		do { a.push(aid.substring(0,47))}
+		while((aid = aid.substring(47,aid.length)) != "");
+		var idanonim = a.toString().split(",").join("\n");
+
+		var blob = new Blob([
+			"--------------ID ANONIM--------------\n\n"
+			+idanonim+
+			"\n\n---------------END IDANIM---------------\n"
+		],
+		{type: "text/plain;charset=utf-8"});
+		saveAs(blob, "ID.txt");
 	}
 	//Create our Keys [skey = privateKey, pkey = publicKey]
 	$scope.createOurKey  = function() {
@@ -144,9 +160,10 @@ angular.module('MainApp', ['ngStorage'])
 				console.log(response.status+ " " +response.data.message+ " " +response.data.anonim_id);
 				console.log("anonim id   "+response.data.anonim_id);
 				$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
-				var id = bigInt(parseInt(response.data.anonim_id,16));
+				console.log("iddate "+$scope.userinfo.user.identityGivenDate);
+				//var id = bigInt(parseInt(response.data.anonim_id,16));
 				var id_2 = bigInt(response.data.anonim_id,16);
-				console.log("decimal id   "+id.toString());
+				//console.log("decimal id   "+id.toString());
 				console.log("decimal id   "+id_2.toString());
 				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc);
 				console.log("invtid   "+identity_anonim.toString());
@@ -156,6 +173,7 @@ angular.module('MainApp', ['ngStorage'])
 
 				var prueba =  pk.modPow(dc, nc);
 				console.log(prueba.toString());
+				$scope.fileID(identity_anonim.toString());
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
@@ -170,6 +188,8 @@ angular.module('MainApp', ['ngStorage'])
 			if(response.status == 403){
 				console.log('Error: ' + response.data.message);
 				console.log('ID: ' + response.data.anonim_id);
+				//RECUPERAR ID???
+
 			}
 			if(response.status == 404){
 				console.log('Error: ' + response.data.message);
