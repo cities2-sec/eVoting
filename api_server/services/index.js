@@ -8,7 +8,9 @@ const fs = require('fs');
 /* Routes*/
 const config = require('../../config');
 const Keys = require('../model/SchemaKeys');
+const KeysPaillier = require('../model/SchemaKeysPaillier');
 const rsa = require('../module/rsa');
+var paillier = require('../module/paillier');
 
 function createKeys(req) {
     /* CENSO */
@@ -67,7 +69,7 @@ function createSecretSharing(req, callback){
   var bitslength = config.bitslength;
   console.log("\n*************SHARING KEYS*************");
 
-  Keys.findOne({keytype: req}, function (err, key) {
+    KeysPaillier.findOne({keytype: req}, function (err, key) {
       if (err) {
           console.log(`ERROR: Petitions doesn't do: ${err}`);
           callback(0);
@@ -77,46 +79,57 @@ function createSecretSharing(req, callback){
           callback(1);
       }
       else {
-      var keys = new rsa.generateKeys(bitslength);
-      var shares = secrets.share(keys.privateKey.p.toString(),4,3);
-/*
-      for(var i=0;i<shares.length;i++){
-        fs.writeFileSync('services.txt', shares[i] , 'utf-8');
-        fs.writeFile("services.txt", shares[i], function(err) {
-          if(err) {
-              return console.log(err);
+      //var keys = new rsa.generateKeys(bitslength);
+          // var shares = secrets.share(keys.privateKey.p.toString(),4,3);
+      var keysPaillier = paillier.generateKeys(bitslength);
+      var privatePaillierShares = keysPaillier.privateKey.lambda+"%"+keysPaillier.privateKey.mu;
+      console.log(privatePaillierShares);
+      var binary_privatePaillierShares = "";
+          for (i=0; i < privatePaillierShares.length; i++) {
+              binary_privatePaillierShares +=privatePaillierShares[i].charCodeAt(0).toString(2) + "";
           }
-          console.log(`The shared key # ${i} was saved!`);
-        })
-      }
-  */
-      console.log("Share Sharing Keys\n"+ shares);
+      console.log("Binario: "+binary_privatePaillierShares);
+
+      var hex_privatePaillierShares = parseInt(binary_privatePaillierShares, 2).toString(16);
+      console.log("Hex: "+hex_privatePaillierShares);
+
+
+      var shares = secrets.share(hex_privatePaillierShares,4,3);
+
+     /* console.log("Share Sharing Keys\n"+ shares);
       var comb = secrets.combine(shares.slice(0,3));
       console.log("The combination of 3 of 4 is correct?");
       console.log( comb==keys.privateKey.p.toString());
       console.log("*********************************************\n");
-      console.log("\n****************SHARING KEYS***************");
+      console.log("\n****************SHARING KEYS***************");*/
 
-          var key = new Keys({
+          var key = new KeysPaillier({
             keytype: req,
             publicKey: {
-                e: keys.publicKey.e,
-                n: keys.publicKey.n,
-                bits: keys.publicKey.bits,
+                n: keysPaillier.publicKey.n.toString(),
+                n2:keysPaillier.publicKey.n2.toString(),
+                beta:keysPaillier.publicKey.beta.toString(),
+                alfa:keysPaillier.publicKey.alfa.toString(),
+                g:keysPaillier.publicKey.g.toString(),
+                bits: keysPaillier.publicKey.bits.toString()
             },
             privateKey: {
-                p: keys.privateKey.p,
-                q: keys.privateKey.q,
-                d: keys.privateKey.d,
-                phi: keys.privateKey.phi,
+                lambda: keysPaillier.privateKey.lambda.toString(),
+                pubkey: keysPaillier.privateKey.pubkey.toString(),
+                mu: keysPaillier.privateKey.mu.toString(),
+                u: keysPaillier.privateKey.u.toString(),
                 publicKey: {
-                    e: keys.publicKey.e,
-                    n: keys.publicKey.n,
-                    bits: keys.publicKey.bits
+                    n: keysPaillier.publicKey.n.toString(),
+                    n2:keysPaillier.publicKey.n2.toString(),
+                    beta:keysPaillier.publicKey.beta.toString(),
+                    alfa:keysPaillier.publicKey.alfa.toString(),
+                    g:keysPaillier.publicKey.g.toString(),
+                    bits: keysPaillier.publicKey.bits.toString()
                 }
             }
           });
-          var keys = null;
+          var keysPailler = null;
+          /*
           key.save(function (err, KeyStored) {
               if (err) {
                   console.log(`ERROR: Not saved in Database: ${err}`);
@@ -127,6 +140,10 @@ function createSecretSharing(req, callback){
                   callback(shares);
               }
           })
+          */
+
+
+
       }
   })
 

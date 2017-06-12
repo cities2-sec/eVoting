@@ -30,5 +30,8 @@
     "angular-file-upload": "^2.5.0",
     "angular-chart.js": "^1.1.1",
     "chart.js": "^2.6.0"
+  },
+  "resolutions": {
+    "webcomponentsjs": "^v1.0.0"
   }
 }

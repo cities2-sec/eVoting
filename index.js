@@ -26,6 +26,11 @@ mongoose.connect(config.db, function (err, res) {
     keys.createKeys("censo");
     //keys.createKeys("urna");
     //keys.createSecretSharing("melectoral");
+    keys.createSecretSharing("melectoral",function(shared_keys){
+        console.log("hola");
+    });
+
+
 
     /* Server listening for HTTP */
     app.listen(config.port, config.ip, function () {
