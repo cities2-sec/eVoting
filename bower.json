@@ -29,7 +29,7 @@
     "polymer": "^2.0.1",
     "angular-file-upload": "^2.5.0",
     "angular-chart.js": "^1.1.1",
-    "chart.js": "^2.6.0"
+    "chart.js": "^2.6.0",
     "crypto-js": "^3.1.9",
     "aes-js": "^3.1.0"
   },
