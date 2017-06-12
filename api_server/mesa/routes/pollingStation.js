@@ -10,5 +10,6 @@ api.get('/keys', pollingStation.getKeys);
 api.get('/results/:name', pollingStation.getResults);
 api.delete('/stopvoting/:name', pollingStation.markVotingEnd);
 api.post('/startvoting', pollingStation.markVotingStart);
+api.post('/sharedkeys',pollingStation.sharedkeys);
 
 module.exports = api;

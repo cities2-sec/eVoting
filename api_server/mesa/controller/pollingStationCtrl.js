@@ -1,11 +1,12 @@
 /**
  * Created by VictorMiranda on 03/02/2017.
  */
-//var $ = require('jquery');
 const PollingStation = require('../model/pollingStationModel');
 const Keys = require('../../model/SchemaKeys');
 const service = require('../../services');
-var bignum = require('bignum');
+const secrets = require('secrets.js');
+const Election = require('../../elections/model/SchemaElection');
+const bignum = require('bignum');
 
 function getKeys(res) {
   Keys.findOne({ keytype: "melectoral" }, function (err, key){
@@ -19,6 +20,45 @@ function getKeys(res) {
       res.status(200).send({publicKey : key.publicKey});
     }
   })
+}
+
+function sharedkeys(req, res){
+
+  var kshared = req.body;
+  console.log(req.body);
+  Keys.findOne({ keytype: "melectoral" }, function (err, key){
+    if(err){
+      return res.status(500).send({message: `Error on the petition: ${err}`});
+    }
+    if(!key){
+      return res.status(404).send({message: `Key does not exist`});
+    }
+    else{
+      var comb = secrets.combine(kshared.slice(0,3));
+      console.log("The combination of 3 of 4 is correct?");
+      console.log(comb==key.privateKey.p.toString());
+      if(comb==key.privateKey.p.toString()){
+        var election = {
+          enabled: false
+        }
+
+        Election.update(election,function(err, user){
+          if(err) {
+              console.log(err);
+              return res.status(500).json("Server error");
+          }
+          else{
+            res.status(200).send({message:"EMPEZANDO EL RECUENTO..."});
+          }
+        });
+      }
+      else{
+          return res.status(400).send({message:"Claves Erroneas"});
+      }
+    }
+  })
+
+
 }
 
 function getResults(req, res) {
@@ -121,5 +161,6 @@ module.exports = {
     getKeys,
     getResults,
     markVotingEnd,
-    markVotingStart
+    markVotingStart,
+    sharedkeys
 };

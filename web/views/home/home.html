@@ -55,14 +55,42 @@
 		</nav>
 
 
-		<div>
-		   <fieldset  data-ng-repeat="choice in choicesA">
-				   <input type="file" id="{{choice.id}}" ng-click ="fileread(choice.id)"></div>
-		         <button class="addfields" ng-click="addNewChoice()">Añadir más claves</button>
-						 <a type="button" class="btn btn-sm btn-danger" ng-click="removeChoice()"><i class="glyphicon glyphicon-remove"></i></a>
-		   </fieldset>
-
-		</div>
+		<div id="login-overlay" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Bienvenido a la Mesa Electoral</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="well">
+                            <form id="loginForm">
+                                <div class="form-group">
+                                    <label for="username" class="control-label">Claves:</label>
+																		<div>
+																			 <fieldset  data-ng-repeat="choice in choices">
+																					<div class="col-xs-1 align-left">
+																				 <a type="button" class="btn btn-sm btn-danger" ng-click="removeChoice(choice.id)"><i class="glyphicon glyphicon-remove"></i></a>
+																			 </div>
+																					<div class="col-xs-11 align-left">
+																					 <input type="file" id="{{choice.id}}" ng-click ="fileread(choice.id)"></input>
+																				 </div>
+																			</fieldset>
+																			<button class="addfields" ng-click="addNewChoice()">Añadir más claves</button>
+																		</div>
+                                </div>
+                                <div id="alert2" class="alert alert-warning text-center" ng-show="showAlert">
+                                    <strong>Alerta!</strong> {{alertText}}
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block"
+																ng-click="sharedbutton()"ng-disabled="">Empezar Recuento</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

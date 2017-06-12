@@ -35,7 +35,7 @@ function get_election(req, res) {
 function get_shared_keys(req, res) {
   console.log("GET SHARED KEY")
   service.createSecretSharing("melectoral",function(shared_keys){
-    console.log("SHARED KEYS: " + shared_keys);
+    console.log("SHARED KEYS: 0 = Error, 1 = Claves entragadas    " + shared_keys );
     if(shared_keys == 0){
       return res.status(500).send({message: "Server Error"})
     }

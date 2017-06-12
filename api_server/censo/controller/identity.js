@@ -46,7 +46,7 @@ function identityRequest(req, res) {
 
                   // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
                   var user_update = {
-                    identityGivenDate: moment().unix(),
+                    identityGivenDate: Date.now(),
                     anonim_id: signedMsg,
                   }
 

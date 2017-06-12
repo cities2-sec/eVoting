@@ -51,9 +51,21 @@ angular.module('MainApp', ['ngStorage'])
 	}
 	// Create File from Keys
 	$scope.fileKeys = function(sKey,pKey,nKey){
-		console.log("skey"+sKey);
-		console.log(pKey);
-		var a = [];
+
+		/*var hex_skey = sKey.toString(16);	//Hexadecimal
+		var hex_pkey = pKey.toString(16);	//Hexadecimal
+		var hex_nkey = nKey.toString(16);	//Hexadecimal*/
+
+		var eVoting = new Blob([
+			pKey+"."+nKey
+		],{type: "text/plain;charset=utf-8"});
+		saveAs(eVoting, "MyPublicKey.txt");
+		var eVoting = new Blob([
+			sKey+"."+nKey
+		],{type: "text/plain;charset=utf-8"});
+		saveAs(eVoting, "MyPrivateKey.txt");
+
+		/*var a = [];
 		do { a.push(sKey.substring(0,47))}
 		while((sKey = sKey.substring(47,sKey.length)) != "");
 		var privateKey = a.toString().split(",").join("\n");
@@ -76,11 +88,18 @@ angular.module('MainApp', ['ngStorage'])
 		],
 		{type: "text/plain;charset=utf-8"});
 		saveAs(blob, "MyKeys.txt");
+		*/
 	}
 	$scope.fileID = function(aid){
 		console.log(aid);
+		var hex_aid = aid.toString(16);
 
-		var a = [];
+		var eVoting = new Blob([
+			hex_aid
+		],{type: "text/plain;charset=utf-8"});
+		saveAs(eVoting, "MyAnonimID.txt");
+
+		/*var a = [];
 		do { a.push(aid.substring(0,47))}
 		while((aid = aid.substring(47,aid.length)) != "");
 		var idanonim = a.toString().split(",").join("\n");
@@ -92,14 +111,17 @@ angular.module('MainApp', ['ngStorage'])
 		],
 		{type: "text/plain;charset=utf-8"});
 		saveAs(blob, "ID.txt");
+		*/
 	}
 	//Create our Keys [skey = privateKey, pkey = publicKey]
 	$scope.createOurKey  = function() {
 		userKeys = rsa.generateKeys(bitlength);
 		$scope.userKeys = userKeys;
-		var sKey = userKeys.privateKey.d.toString();
-		var pKey = userKeys.privateKey.publicKey.e.toString();
-		var nKey = userKeys.privateKey.publicKey.n.toString();
+		console.log(userKeys);
+		var sKey = userKeys.privateKey.d.toString(16);
+		var pKey = userKeys.privateKey.publicKey.e.toString(16);
+		var nKey = userKeys.privateKey.publicKey.n.toString(16);
+		console.log(pKey);
 		$scope.fileKeys(sKey, pKey, nKey);
 		$scope.id_request = true;
 	}
@@ -122,12 +144,11 @@ angular.module('MainApp', ['ngStorage'])
 	}
 	// GET AnonimID from CENSO
 	$scope.getAnonimID = function(){
-		if ($scope.userinfo.user.identityGivenDate === undefined){
 
-			console.log("create id");
+		if ($scope.userinfo.user.identityGivenDate === undefined){
+			console.log("Unblinding ID...");
 			var r,bm,pk,nc,ec,eu,nu;
 			var body_sign = null;
-
 			r = bigInt.randBetween("0", "1e100");
 			nc = bigInt($scope.censoKeys.publicKey.n);
 			ec = bigInt($scope.censoKeys.publicKey.e);
@@ -135,8 +156,9 @@ angular.module('MainApp', ['ngStorage'])
 			nu = bigInt($scope.userKeys.publicKey.n);
 			pk = nu;
 			bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
+			console.log(bm)
 			var identity = bm.toString(16);	//Hexadecimal
-
+			console.log(identity);
 			var body_sign = ({
 				signid : identity,
 				_id : $localStorage._id
@@ -144,13 +166,12 @@ angular.module('MainApp', ['ngStorage'])
 			console.log(body_sign);
 		}
 		else{
-			console.log("no create id");
+			console.log("No Created ID");
 			var body_sign = ({
 				signid : "no_id",
 				_id : $localStorage._id
 			});
 		}
-
 		var options = {
 				headers: {
 						'Content-Type': 'application/json',
@@ -158,27 +179,18 @@ angular.module('MainApp', ['ngStorage'])
 						'Authorization': "Bearer "+ $localStorage.token
 				}
 		}
-
 		//var result =  m.modPow(e, n);
 		$http.post('/censo/identity/request',body_sign, options)
 		.then(function successCallback(response){
 			if(response.status == 200){
-				console.log(response.status+ " " +response.data.message+ " " +response.data.anonim_id);
-				console.log("anonim id   "+response.data.anonim_id);
+				console.log("Message: "+response.data.message+ " | Anonim_id: " +response.data.anonim_id);
 				$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
-				console.log("iddate "+$scope.userinfo.user.identityGivenDate);
-				//var id = bigInt(parseInt(response.data.anonim_id,16));
-				var id_2 = bigInt(response.data.anonim_id,16);
-				//console.log("decimal id   "+id.toString());
-				console.log("decimal id   "+id_2.toString());
-				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc);
-				console.log("invtid   "+identity_anonim.toString());
 
-				//console.log($scope.censoKeys.privateKey.d);
-				//dc = bigInt($scope.censoKeys.privateKey.d);
+				var dec_aid = bigInt(response.data.anonim_id,16);
+				console.log("decimal id   "+dec_aid.toString());
+				var identity_anonim =  dec_aid.multiply(r.modInv(nc)).mod(nc);
+				console.log("Unblind ID: "+identity_anonim.toString());
 
-				//var prueba =  pk.modPow(dc, nc);
-				//console.log(prueba.toString());
 				$scope.fileID(identity_anonim.toString());
 			}
 		},function errorCallback(response){
