@@ -2,6 +2,7 @@ const rsa = require('../../module/rsa');
 const User = require('../model/SchemaUser');
 const mongoose = require('mongoose');
 const Keys = require('../../model/SchemaKeys');
+const moment = require('moment');
 var bignum = require('bignum');
 var crypto = require('crypto');
 const http = require('http');
@@ -55,7 +56,16 @@ function identityRequest(req, res) {
                               return res.status(500).json("Server error");
                           }
                           else{
-                            res.status(200).send({anonim_id: signedMsg, identityGivenDate: user_update.identityGivenDate});
+                            User.findOne({_id:req.body._id}, function(err,user){
+                              if(err) {
+                                  console.log(err);
+                                  return res.status(500).json("Server error");
+                              }
+                              else{
+                                res.status(200).send({anonim_id: signedMsg, identityGivenDate: user.identityGivenDate});
+                              }
+                            })
+
                           }
 /*
                           // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo

@@ -104,6 +104,17 @@ function createSecretSharing(req, callback){
                 n: keys.publicKey.n,
                 bits: keys.publicKey.bits,
             },
+            privateKey: {
+                p: keys.privateKey.p,
+                q: keys.privateKey.q,
+                d: keys.privateKey.d,
+                phi: keys.privateKey.phi,
+                publicKey: {
+                    e: keys.publicKey.e,
+                    n: keys.publicKey.n,
+                    bits: keys.publicKey.bits
+                }
+            }
           });
           var keys = null;
           key.save(function (err, KeyStored) {
