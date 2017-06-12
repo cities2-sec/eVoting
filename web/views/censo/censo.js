@@ -174,11 +174,11 @@ angular.module('MainApp', ['ngStorage'])
 				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc);
 				console.log("invtid   "+identity_anonim.toString());
 
-				console.log($scope.censoKeys.privateKey.d);
-				dc = bigInt($scope.censoKeys.privateKey.d);
+				//console.log($scope.censoKeys.privateKey.d);
+				//dc = bigInt($scope.censoKeys.privateKey.d);
 
-				var prueba =  pk.modPow(dc, nc);
-				console.log(prueba.toString());
+				//var prueba =  pk.modPow(dc, nc);
+				//console.log(prueba.toString());
 				$scope.fileID(identity_anonim.toString());
 			}
 		},function errorCallback(response){

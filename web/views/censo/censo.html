@@ -41,14 +41,19 @@
 	<div id="contenedor" class="container">
 		<div notifybar style="position:absolute;top:0;right:0"></div>
 
-<!-- NAV BAR -->
-		<nav id="cabecera" class="navbar navbar-default">
-		  <div class="container-fluid">
-		    <div class="navbar-header">
-		      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
-				</div>
-			</div>
-		</nav>
+		<!-- NAV BAR -->
+				<nav id="cabecera" class="navbar navbar-default">
+				  <div class="container-fluid">
+				    <div class="navbar-header">
+				      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
+						</div>
+						<ul class="nav navbar-nav navbar-right">
+		          <li><a href="/censo/login">Censo</a></li>
+		          <li><a href="/urna">Urna</a></li>
+		          <li><a href="/home">Mesa Electoral</a></li>
+		        </ul>
+					</div>
+				</nav>
 
 		<div class="container">
 		      <div class="row">
@@ -86,7 +91,7 @@
 		                  </table>
 											<div align = "center">
 		                  <button  class="btn btn-warning "ng-click="createOurKey()" ng-show="!userinfo.user.identityGivenDate">Creat Crear Claves</button>
-											<button  class="btn btn-danger "ng-click="getAnonimID()" ng-disabled="!id_request">Petición ID Anónima</button>
+											<button  class="btn btn-danger "ng-click="getAnonimID()" ng-disabled="!id_request" ng-show="!userinfo.user.identityGivenDate">Petición ID Anónima</button>
 											</div>
 		                </div>
 		              </div>

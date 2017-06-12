@@ -28,9 +28,6 @@
 	<link rel="stylesheet" href="/css/index.css">
 	<script src="/views/urna/urna.js"></script>
 
-	<!-- Controlers
-	<script src="/views/censo/index.js">
-	-->
 
 </head>
 <base href="/">
@@ -41,14 +38,19 @@
 	<div id="contenedor" class="container">
 		<div notifybar style="position:absolute;top:0;right:0"></div>
 
-<!-- NAV BAR -->
-		<nav id="cabecera" class="navbar navbar-default">
-		  <div class="container-fluid">
-		    <div class="navbar-header">
-		      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
-				</div>
-			</div>
-		</nav>
+		<!-- NAV BAR -->
+				<nav id="cabecera" class="navbar navbar-default">
+				  <div class="container-fluid">
+				    <div class="navbar-header">
+				      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
+						</div>
+						<ul class="nav navbar-nav navbar-right">
+		          <li><a href="/censo/login">Censo</a></li>
+		          <li><a href="/urna">Urna</a></li>
+		          <li><a href="/home">Mesa Electoral</a></li>
+		        </ul>
+					</div>
+				</nav>
 
 		<div class="container">
 			<div class="row">
@@ -88,7 +90,6 @@
 						</div>
 						<button type="button" ng-click="voteConfirm()" id="voteConfirm" class="btn btn-primary ">Confirm </button>
 					</form>
-
 				</div>
 			</div>
 
