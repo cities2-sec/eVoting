@@ -70,6 +70,7 @@ function getResults(req, res) {
             '3partido' : Math.floor((resultados / 100) % 10),
             '4partido' : Math.floor((resultados / 1000) % 10)
         };
+
         return resultado;
 
     }
