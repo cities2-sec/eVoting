@@ -1,7 +1,9 @@
 /**
  * Created by VictorMiranda on 03/02/2017.
  */
+var $ = require('jquery');
 const PollingStation = require('../model/pollingStationModel');
+const BallotBox = require('../../urna/model/SchemaBallotBox');
 const Keys = require('../../model/SchemaKeys');
 const service = require('../../services');
 const secrets = require('secrets.js');
@@ -64,12 +66,7 @@ function sharedkeys(req, res){
 function getResults(req, res) {
 
     var voting_ended;
-    var votos = {};
     var results = {};
-    var num_votos = 0;
-    var n;
-    var mu;
-    var lambda;
 
     PollingStation.find(
         {name: req.params.name},
@@ -84,10 +81,6 @@ function getResults(req, res) {
     );
 
     function countVotes(votos, nvotos, n, mu, lambda, npartidos) {
-        // Función para contar los votos
-        // Tres partidos
-        // Población de 10 personas
-
         /*
          http://security.hsr.ch/msevote/seminar-papers/HS09_Homomorphic_Tallying_with_Paillier.pdf
          */
@@ -104,32 +97,43 @@ function getResults(req, res) {
         var resultado_f2 = bignum(resultado_f1).sub(1).div(n);
         var resultados = bignum(resultado_f2).mul(mu).mod(n).toNumber();
 
-        //for (var i=0;i<npartidos;i++){
-        //    resultado[ npartidos + 'partido' ] = Math.floor((resultados / Math.pow(10,npartidos-1)) % 10);
-        //}
+        var resultado = {};
 
-        var resultado = {
+        for (var i=0; i<npartidos; i++){
+
+            resultado[ npartidos + 'partido' ] = Math.floor((resultados / Math.pow(10,npartidos-1)) % 10);
+        }
+
+        /*var resultado = {
             '1partido' : Math.floor((resultados / 1) % 10),
             '2partido' : Math.floor((resultados / 10) % 10),
             '3partido' : Math.floor((resultados / 100) % 10),
             '4partido' : Math.floor((resultados / 1000) % 10)
-        };
+        };*/
 
         return resultado;
 
     }
 
     if (voting_ended) {
+        var votes = {};
+        var num_votes = 0;
         var n = 0;
         var mu = 0;
         var lambda = 0;
-        $.get(global.API + '/api/urna/open', function (data) {
+        var data = {};
+
+        BallotBox.find(function (err, response) {
+            if (err)
+                res.send(err);
+            data = response;
             votes = data.votes;
             num_votes = data.numOfVotes;
             n = data.cipher.n;
             mu = data.cipher.mu;
             lambda = data.cipher.lambda;
         });
+
         results = countVotes(votes, num_votes, n, mu, lambda);
         return res.status(200).send(results);
     }
