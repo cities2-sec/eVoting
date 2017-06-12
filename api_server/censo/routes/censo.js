@@ -16,7 +16,7 @@ api.get('/private', auth, userCtrl.authUser);
 api.get('/stats', userCtrl.censoStats);
 //identityCtrl
 api.post('/identity/request', auth, identityCtrl.identityRequest);
-api.post('/identity/request2', auth, identityCtrl.identityRequest2);
+api.post('/identity/requestnr', auth, identityCtrl.identityRequestNR);
 //keyCtrl
 api.get('/key', keyCtrl.getKey);
 
