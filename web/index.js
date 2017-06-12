@@ -37,6 +37,10 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 	$scope.alertText ={};
 	$scope.showAlert = false;
 
+	$scope.r = bigInt.zero;
+	$scope.cipheredID = "";
+	$scope.IDhex = "";
+
 $scope.login.username = "47915398G";
 $scope.login.password = "pass";
 
@@ -211,7 +215,7 @@ $scope.login.password = "pass";
 		nu = bigInt($scope.userKeys.publicKey.n);
 
 		pk = nu;
-		//console.log(pk);
+		console.log("pk: "+pk);
 		bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
 		var identity = bm.toString(16);//Hexadecimal
 		//console.log(bm);
@@ -273,6 +277,165 @@ $scope.login.password = "pass";
 
 		})
 	};
+
+	$scope.getAnonimID_nonRepudiation = function() {
+
+		var r,bm,pk,nc,ec,eu,nu;
+
+		r = bigInt.randBetween("0", "1e100");
+		$scope.r = r;
+		//console.log("Cegando con r: "+r);
+
+
+		nc = bigInt($scope.censoKeys.publicKey.n);
+		ec = bigInt($scope.censoKeys.publicKey.e);
+		nu = bigInt($scope.userKeys.publicKey.n);
+		du = bigInt($scope.userKeys.privateKey.d);
+
+		//console.log("nc: "+nc.toString(16));
+
+		// la identidad es la clave publica del usuario
+		pk = nu;
+		console.log("Identidad sin cegar: "+pk.toString(16));
+
+		// cegamso la identidad con r
+		var bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
+		var identity = bm.toString(16);//Hexadecimal
+		console.log("identity cegada: "+identity);
+
+		// preparo el primer mensaje enviando la identidad cegada para que la firme el censo
+		var body = JSON.stringify({
+			"msgid": 1,
+			"msg": identity
+		});
+
+		var options = {
+			headers: {
+				'Content-Type': 'application/json',
+				//'Content-Length': body_sign.toString().length,
+				'Authorization': "Bearer "+ $localStorage.token
+			}
+		}
+
+		$http.post('/censo/identity/requestnr',body, options)
+			.then(function successCallback(response){
+				var body = response.data;
+				//console.log(JSON.stringify(body));
+
+				$scope.cipheredID = body.C;
+
+				// comprobacion de Po
+				var unsignedPo = bigInt(body.Po, 16).modPow($scope.censoKeys.publicKey.e, $scope.censoKeys.publicKey.n);
+				var myPoString = body.src+"%"+body.dst+"%"+body.C;
+				var myPoHash = CryptoJS.SHA256(myPoString);
+				var PoHash = unsignedPo.toString(16);
+				//console.log("PoHash: "+PoHash);
+				//console.log("myPoHash: "+myPoHash);
+				if(PoHash == myPoHash) {
+					console.log("Po verificado");
+				}
+				else{
+					console.log("Po erroneo");
+					return;
+				}
+
+				// genero Pr para enviarlo en la response
+				var PrString = "B%A%"+body.C;
+				//console.log("PrString: "+PrString);
+				var PrHash = CryptoJS.SHA256(PrString).toString(CryptoJS.enc.Hex);
+				//console.log("Pr hash: "+PrHash);
+				var unsignedPr = bigInt(PrHash, 16);
+				//console.log("unsignedPr: "+unsignedPr.toString());
+                var signedPr = unsignedPr.modPow($scope.userKeys.privateKey.d.toString(), $scope.userKeys.publicKey.n.toString());
+				//console.log("signedPr: "+signedPr.toString());
+				var signedPrHash = signedPr.toString(16);
+				//console.log("signedPrHash: "+signedPrHash);
+
+				// envio la respuesta con la proof of reception
+				var msg2 = {
+					"msgid": 2,
+					"msg": {
+						"src": "B",
+						"dst": "A",
+						"Pr": signedPrHash,
+						"publicKey": {
+							"bits": $scope.userKeys.publicKey.bits,
+							"n": $scope.userKeys.publicKey.n.toString(16),
+							"e": $scope.userKeys.publicKey.e.toString(16)
+						}
+					}
+				}
+
+				$scope.sendMsg2_nonRepudiation(msg2);
+
+			},function errorCallback(response){
+				console.log("Error: "+response.status);
+				return;
+
+			})
+	}
+
+	$scope.sendMsg2_nonRepudiation = function (msg) {
+		var body = JSON.stringify(msg);
+
+		var options = {
+			headers: {
+				'Content-Type': 'application/json',
+				//'Content-Length': body_sign.toString().length,
+				'Authorization': "Bearer "+ $localStorage.token
+			}
+		}
+
+		//var result =  m.modPow(e, n);
+		$http.post('/censo/identity/requestnr',body, options)
+			.then(function successCallback(response){
+				var body = response.data;
+				//console.log("Clave: "+JSON.stringify(body));
+
+				// si usamos ctr solo hace falta la key
+				var keyHex = body.key;
+
+				//console.log("Desncriptando: "+$scope.cipheredID);
+				//console.log("Con key: "+keyHex);
+				//console.log("Y IV: "+ivHex);
+				//console.log("cipheredID: "+$scope.cipheredID);
+				var encryptedBytes = aesjs.utils.hex.toBytes($scope.cipheredID);
+				var aesCtr = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(keyHex));
+				var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+				var decryptedHex = aesjs.utils.hex.fromBytes(decryptedBytes);
+				//console.log("decrypted: "+decryptedHex);
+
+				// decryptedHex es la identidad cegada firmada por el censo
+				// lo descegamos
+				var nc = bigInt($scope.censoKeys.publicKey.n);
+				var r = bigInt($scope.r);
+				var id_2 = bigInt(decryptedHex,16);
+				//console.log("decimal id   "+id.toString());
+				//console.log("decimal id   "+id_2.toString());
+				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+				//console.log("invtid   "+identity_anonim.toString());
+
+				// Comprobacion de que el proceso es correcto
+				//console.log($scope.censoKeys.privateKey.d);
+				//var dc = bigInt($scope.censoKeys.privateKey.d);
+				var pk = bigInt($scope.userKeys.publicKey.n);
+				var ec = bigInt($scope.censoKeys.publicKey.e);
+				//var prueba =  pk.modPow(dc, nc);
+				//console.log(prueba.toString());
+
+				var sinFirma = identity_anonim.modPow(ec, nc);
+				console.log("***************** Comprobacion de la firma ******************");
+
+				console.log("Clava publica usuario: "+$scope.userKeys.publicKey.n.toString(16));
+				console.log("Identidad recibida sin firmar: "+sinFirma.toString(16));
+
+				//$scope.fileID(identity_anonim.toString());
+
+			},function errorCallback(response){
+				console.log("Error: "+response.status);
+			})
+	}
+
 
 	$scope.getCensoKeys();
 });

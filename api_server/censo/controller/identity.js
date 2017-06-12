@@ -5,6 +5,7 @@ const Keys = require('../../model/SchemaKeys');
 const moment = require('moment');
 var bignum = require('bignum');
 var crypto = require('crypto');
+var aesjs = require('aes-js');
 const http = require('http');
 
 
@@ -85,15 +86,17 @@ function identityRequest(req, res) {
       }
     }
   })
+}
 
-    /*switch(body.msgid) {
-
+function identityRequestNR(req, res) {
+    var body = req.body;
+    switch(body.msgid) {
         case 1:
             // Si es el primer mensaje, el censo revisa que no se le haya dado ya una identidad anonima
+            /*
             if(req.user.identityGivenDate) {
                 return res.status(403).json("You already have an anonymous identity");
-            }
-
+            }*/
             // Firmar identidad
 
             // Obtener keys de la BD
@@ -122,13 +125,14 @@ function identityRequest(req, res) {
                                 return res.status(500).json("Server error");
                             }
 
+                            removeSessionFromUsername(req.user.username);
                             // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo
                             var currentSession = {
                                 "username": req.user.username
                             }
                             // Empiezo el no repudio enviando el primer mensaje
-                            startNonRepudiation("hola", privateKey, res, currentSession);
-                    });
+                            startNR(signedMsg, privateKey, res, currentSession);
+                        });
 
                 }
                 else {
@@ -138,32 +142,32 @@ function identityRequest(req, res) {
 
             break;
         case 2:
-            processMsg2(body.msg, {}, res, getSessionFromUsername(req.user.username));
-            break;
-        case 3:
-            res.status(501).json();
+            processNRMsg2(body.msg, {}, res, getSessionFromUsername(req.user.username));
             break;
         default:
             res.status(400).json("Unrecognized msg id");
     }
-    */
 }
 
-function startNonRepudiation(msg, privateKey, res, currentSession) {
+function startNR(msg, privateKey, res, currentSession) {
   //generar una clave simétrica
-  var algorithm = 'aes256';
-  var inputEncoding = 'utf8';
-  var outputEncoding = 'hex';
-  var keyBuf = crypto.randomBytes(32);
-  var ivBuf = crypto.randomBytes(16);
-  var key = keyBuf.toString(outputEncoding)+"."+ivBuf.toString(outputEncoding);
+  var keyBuf = crypto.randomBytes(16);
+  //var ivBuf = crypto.randomBytes(16);
+  //var key = keyBuf.toString(outputEncoding)+"."+ivBuf.toString(outputEncoding);
+  var key = keyBuf.toString('hex');
 
   //enciptamos el mensaje con la clave generada
-  console.log("Cifrando msg: "+msg+" con altorigmo: "+algorithm+ " y clave: "+key);
-  var cipher = crypto.createCipher(algorithm, keyBuf, ivBuf);
-  var ciphered = cipher.update(msg, inputEncoding, outputEncoding);
-  ciphered += cipher.final(outputEncoding);
+  console.log("Encriptando: "+msg);
+  console.log("Con key: "+keyBuf.toString('hex'));
+  //console.log("Y IV: "+ivBuf.toString('hex'));
+  //var cipher = crypto.createCipher(algorithm, keyBuf, ivBuf);
+  //var ciphered = CryptoJS.AES.encrypt(msg, keyBuf.toString('hex')).toString();
+  //var ciphered = cipher.update(msg, inputEncoding, outputEncoding);
+  //ciphered += cipher.final(outputEncoding);
 
+  var aesCtr = new aesjs.ModeOfOperation.ctr(keyBuf);
+  var cipheredBytes = aesCtr.encrypt(aesjs.utils.hex.toBytes(msg));
+  var ciphered = aesjs.utils.hex.fromBytes(cipheredBytes);
   console.log("Resultado: "+ciphered);
 
   //Generamos el hash del proof of origin
@@ -188,33 +192,38 @@ function startNonRepudiation(msg, privateKey, res, currentSession) {
 
   //Lo guardo en una variable de scope de todo el documento
   sessions.push(currentSession);
-
+  console.log(JSON.stringify(msg1));
   res.status(200).json(msg1);
 }
 
-function processMsg2(msg, privateKey, res, currentSession) {
+function processNRMsg2(msg, privateKey, finalRes, currentSession) {
   console.log(JSON.stringify(msg));
   // Genero la public key a partir de los datos que ha enviado
-  var publicKey = new rsa.publicKey(msg.publicKey.bits, new bignum(msg.publicKey.n, 16), new bignum(msg.publicKey.e, 16));
+  var publicKey = new rsa.publicKey(msg.publicKey.bits, bignum(msg.publicKey.n, 16), bignum(msg.publicKey.e, 16));
+  console.log(parseInt(msg.publicKey.n, 16));
   // El Pr viene firmado, así que compruebo la firma
+  var signedPr = bignum(msg.Pr, 16);
+  console.log("signedPr: "+signedPr);
   var unsignedPr = publicKey.verify(bignum(msg.Pr, 16));
-  var PrHash = unsignedPr.toBuffer().toString('base64');
-
+  console.log("unsignedPr: "+unsignedPr);
+  var PrHash = unsignedPr.toString(16);
+  console.log("PrHash: "+PrHash);
   // Una vez tengo el hash del Pr recibido, genero otro para compararlos
   var myPrString = msg.src+"%"+msg.dst+"%"+currentSession.C;
   console.log("myPrString: "+myPrString);
   var hash = crypto.createHash('sha256');
   hash.update(myPrString);
-  var myPrHash = hash.digest('base64');
+  var myPrHash = hash.digest('hex');
 
-  console.log("PrHash: "+PrHash);
+
   console.log("myPrHash: "+myPrHash);
   // Comparo el hash recibido y el generado por mi
   if(PrHash == myPrHash) {
       console.log("Pr verificado");
   }
   else{
-      return;
+      console.log("Pr no verificado");
+      //return;
   }
 
   //Falta continuar enviando los datos a la ttp
@@ -251,6 +260,7 @@ function processMsg2(msg, privateKey, res, currentSession) {
             console.log(JSON.stringify(body));
 
             console.log("Clave publicada en la ttp");
+            return finalRes.status(200).send(body);
         });
     });
 
@@ -267,6 +277,16 @@ var getSessionFromUsername = function(username) {
   return {};
 }
 
+var removeSessionFromUsername = function(username) {
+    for(var i = 0; i<sessions.length; i++) {
+        if(sessions[i].username = username) {
+            sessions.splice(i,1);
+            return;
+        }
+    }
+}
+
 module.exports = {
-  identityRequest
+  identityRequest,
+  identityRequestNR
 }

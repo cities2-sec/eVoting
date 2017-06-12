@@ -46,18 +46,19 @@ var identityRequest = function() {
     var options = {
         hostname: 'localhost',
         port: 8080,
-        path: '/censo/identity/request',
+        path: '/censo/identity/request2',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(body),
-            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNzYW50aTIiLCJpYXQiOjE0OTUyMDIxNjMsImV4cCI6MTQ5NjQxMTc2M30.B0vQlhKy7TOs4HGRardygVYFwnl_ziKaVmrSEpBoEfo"
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjQ3OTE1Mzk4RyIsImlhdCI6MTQ5NzExMDc3OSwiZXhwIjoxNDk4MzIwMzc5fQ.EHKtq_IOxpMWOjaDDt2ibivXPnQHvK3duB5juV8kP8g"
         }
     };
 
 
     var post_req = http.request(options, function (res) {
         if(res.statusCode !== 200) {
+            console.log("Status code: "+res.statusCode);
             console.log("Ya se ha solicitado una identidad con este token");
             return;
         }
@@ -125,18 +126,18 @@ var sendMsg2 = function(msg) {
     var options = {
         hostname: 'localhost',
         port: 8080,
-        path: '/censo/identity/request',
+        path: '/censo/identity/request2',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(body),
-            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImNzYW50aTIiLCJpYXQiOjE0OTUyMDIxNjMsImV4cCI6MTQ5NjQxMTc2M30.B0vQlhKy7TOs4HGRardygVYFwnl_ziKaVmrSEpBoEfo"
+            'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjQ3OTE1Mzk4RyIsImlhdCI6MTQ5NzExMDc3OSwiZXhwIjoxNDk4MzIwMzc5fQ.EHKtq_IOxpMWOjaDDt2ibivXPnQHvK3duB5juV8kP8g"
         }
     };
 
     var post_req = http.request(options, function (res) {
         if(res.statusCode !== 200) {
-            console.log("Error");
+            console.log("Error: "+res.statusCode);
             return;
         }
         var chunks = [];
@@ -147,7 +148,7 @@ var sendMsg2 = function(msg) {
 
         res.on("end", function () {
             var body = JSON.parse(Buffer.concat(chunks).toString());
-            console.log(JSON.stringify(body));
+            console.log("Clave: "+JSON.stringify(body));
 
 
 

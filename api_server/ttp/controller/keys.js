@@ -28,17 +28,26 @@ function postKey (req, res) {
         return res.status(400).json("No username or key");
     }
 
+
     const key = new TtpKeys({
         username: body.username,
         key: body.key
     });
-    key.save(function (err, key) {
-        if(err) {
-            console.log(err);
+
+    TtpKeys.findOneAndUpdate({username: key.username}, {key: key.key}, {upsert:true}, function(error, result) {
+        if (error) {
+            console.log("[TTP] Error al buscar key")
             return res.status(500).send("Server error");
         }
-        return res.status(200).send(key);
-    })
+        if(!result) {
+            console.log("[TTP] Clave creada");
+            return res.status(200).send(key);
+        }
+        else {
+            console.log("[TTP] Clave actualizada");
+            return res.status(200).send(key);
+        }
+    });
 }
 
 module.exports = {
