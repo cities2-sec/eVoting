@@ -43,7 +43,7 @@ function getResults(req, res) {
         }
     );
 
-    function countVotes(votos, nvotos, n, mu, lambda) {
+    function countVotes(votos, nvotos, n, mu, lambda, npartidos) {
         // Función para contar los votos
         // Tres partidos
         // Población de 10 personas
@@ -64,25 +64,33 @@ function getResults(req, res) {
         var resultado_f2 = bignum(resultado_f1).sub(1).div(n);
         var resultados = bignum(resultado_f2).mul(mu).mod(n).toNumber();
 
+        //for (var i=0;i<npartidos;i++){
+        //    resultado[ npartidos + 'partido' ] = Math.floor((resultados / Math.pow(10,npartidos-1)) % 10);
+        //}
+
         var resultado = {
             '1partido' : Math.floor((resultados / 1) % 10),
             '2partido' : Math.floor((resultados / 10) % 10),
             '3partido' : Math.floor((resultados / 100) % 10),
             '4partido' : Math.floor((resultados / 1000) % 10)
         };
+
         return resultado;
 
     }
 
     if (voting_ended) {
+        var n = 0;
+        var mu = 0;
+        var lambda = 0;
         $.get(global.API + '/api/urna/open', function (data) {
-            votos = data.votes;
-            num_votos = data.numOfVotes;
+            votes = data.votes;
+            num_votes = data.numOfVotes;
             n = data.cipher.n;
             mu = data.cipher.mu;
             lambda = data.cipher.lambda;
         });
-        results = countVotes(votos, num_votos, n, mu, lambda);
+        results = countVotes(votes, num_votes, n, mu, lambda);
         return res.status(200).send(results);
     }
     else {
