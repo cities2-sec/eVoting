@@ -42,7 +42,7 @@ mongoose.connect(config.db, function (err, res) {
     });*/
 
     global.API = `http://${config.ip}:${config.port}`;
-    /*
+
     try{
       var privateKey  = fs.readFileSync('cert/mysitename.key', 'utf8');
       var certificate = fs.readFileSync('cert/mysitename.crt', 'utf8');
@@ -50,7 +50,7 @@ mongoose.connect(config.db, function (err, res) {
       var httpsServer = https.createServer(credentials, app);
 
       /* Server listening for HTTPS */
-      /*
+      
       httpsServer.listen(config.secure_port, function () {
           console.log(`Running server on https://${config.ip}:${config.secure_port}`);
       });
@@ -59,5 +59,5 @@ mongoose.connect(config.db, function (err, res) {
       console.log('Https server is not running now');
       console.log(`${err}`);
     }
-    */
+
 });
