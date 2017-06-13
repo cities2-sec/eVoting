@@ -33,9 +33,13 @@ mongoose.connect(config.db, function (err, res) {
 
 
     /* Server listening for HTTP */
-    app.listen(config.port, config.ip, function () {
+    app.listen(config.port, function () {
         console.log(`Running server on http://${config.ip}:${config.port}`);
     });
+    /*
+    app.listen(config.port, config.ip, function () {
+        console.log(`Running server on http://${config.ip}:${config.port}`);
+    });*/
 
     global.API = `http://${config.ip}:${config.port}`;
 
