@@ -28,7 +28,7 @@ angular.module('MainApp', ['ngStorage'])
     $scope.elections = function () {
         $http.get('election/get_election')
             .then(function successCallback(response){
-                if(response.status == 200){
+                if(response.status === 200){
                     $scope.election=response.data;
                     console.log($scope.election);
                     $scope.parties = $scope.election[0].parties;
@@ -37,12 +37,12 @@ angular.module('MainApp', ['ngStorage'])
 
                 }
             },function errorCallback(response){
-                if(response.status == 500){
+                if(response.status === 500){
                     console.log(response.data.message);
                 }
 
             })
-    }
+    };
     $scope.elections();
 
 
@@ -50,19 +50,19 @@ angular.module('MainApp', ['ngStorage'])
 	$scope.getMesaKeys = function(){
 		$http.get('/mesa/keys')
 		.then(function successCallback(response){
-			if(response.status == 200){
-				$scope.mesaKey=response.data;
-				console.log($scope.mesaKey);
+			if(response.status === 200){
+                $scope.mesaKey=response.data;
+                console.log($scope.mesaKey);
 			}
 		},function errorCallback(response){
-			if(response.status == 500){
+			if(response.status === 500){
 				console.log(response.data.message);
 			}
-			if(response.status == 404){
+			if(response.status === 404){
 				console.log('Error: ' + response.data.message);
 			}
 		})
-	}
+	};
 
 
 	$scope.getMesaKeys();
@@ -81,7 +81,7 @@ angular.module('MainApp', ['ngStorage'])
                     console.log(reader.result);
                     $scope.file.id = reader.result;
                     console.log( $scope.file);
-                }
+                };
                 reader.readAsText(file);
             } else {
             }
@@ -98,7 +98,7 @@ angular.module('MainApp', ['ngStorage'])
                     console.log(reader2.result);
                     $scope.file.pk = reader2.result;
                     console.log($scope.file);
-                }
+                };
                 reader2.readAsText(file2);
             } else {
             }
@@ -130,26 +130,26 @@ angular.module('MainApp', ['ngStorage'])
 		//send to BD
         $http.post('/urna/vote',{voto: voto})
             .then(function successCallback(response){
-                if(response.status == 200){
+                if(response.status === 200){
                     console.log(response.status+ " " +response.data.message);
 
                 }
             },function errorCallback(response){
-                if(response.status == 500){
+                if(response.status === 500){
                     console.log(response.data.message);
                 }
-                if(response.status == 400){
+                if(response.status === 400){
                     console.log('Error: ' + response.data.message);
                 }
-                if(response.status == 500){
+                if(response.status === 500){
                     console.log('Error: ' + response.data.message);
                 }
-                if(response.status == 403){
+                if(response.status === 403){
                     console.log('Error: ' + response.data.message);
 
 
                 }
-                if(response.status == 404){
+                if(response.status === 404){
                     console.log('Error: ' + response.data.message);
                 }
             })
