@@ -6,7 +6,7 @@
   "description": "Proyecto de voto electrónico",
   "main": "index.js",
   "scripts": {
-    "production":"node index.js"
+    "production":"node index.js",
     "prestart": "npm install",
     "postinstall": "bower install",
     "start": "nodemon index.js",
