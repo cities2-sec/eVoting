@@ -3,10 +3,11 @@ const User = require('../model/SchemaUser');
 const mongoose = require('mongoose');
 const Keys = require('../../model/SchemaKeys');
 const moment = require('moment');
-var bignum = require('bignum');
-var crypto = require('crypto');
-var aesjs = require('aes-js');
+const bignum = require('bignum');
+const crypto = require('crypto');
+const aesjs = require('aes-js');
 const http = require('http');
+const config = require('../../../config');
 
 
 var sessions = [];
@@ -233,8 +234,8 @@ function processNRMsg2(msg, privateKey, finalRes, currentSession) {
     });
 
     var options = {
-        hostname: 'localhost',
-        port: 8080,
+        hostname: config.ip,
+        port: config.port,
         path: '/ttp',
         method: 'POST',
         headers: {
