@@ -1,7 +1,7 @@
 angular.module('MainApp', ['ngStorage'])
 
 .controller('censoController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
-	var bitlength = 128 || 1024;
+	var bitlength;
 	var userKeys;
 	$scope.censoKeys = {};
 	$scope.userinfo =  {};
@@ -131,6 +131,8 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.censoKeys=response.data;
+			bitslength = response.data.publicKey.bits;
+			console.log(bitslength);
 				console.log($scope.censoKeys);
 			}
 		},function errorCallback(response){
@@ -400,7 +402,6 @@ angular.module('MainApp', ['ngStorage'])
 		})
 
 	}
-
 
 	$scope.token();
 	$scope.getCensoKeys();
