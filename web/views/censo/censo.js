@@ -324,7 +324,6 @@ angular.module('MainApp', ['ngStorage'])
 		$http.post('/censo/identity/requestnr',body, options)
 			.then(function successCallback(response){
 				var body = response.data;
-
 				// si usamos ctr solo hace falta la key
 				var keyHex = body.key;
 
@@ -337,8 +336,9 @@ angular.module('MainApp', ['ngStorage'])
 				// lo descegamos
 				var nc = bigInt($scope.censoKeys.publicKey.n);
 				var r = bigInt($scope.r);
-				var id_2 = bigInt(decryptedHex,16);
-				var identity_anonim =  id_2.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+				var dec_aid = bigInt(decryptedHex,16);
+				var identity_anonim =  dec_aid.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+
 
 				// Comprobacion de que el proceso es correcto
 				var ec = bigInt($scope.censoKeys.publicKey.e);
@@ -354,8 +354,6 @@ angular.module('MainApp', ['ngStorage'])
 				} else {
 					console.log("La identidad obtenida no es válida");
 				}
-
-
 			},function errorCallback(response){
 				console.log("Error: "+response.status);
 			})
@@ -375,11 +373,12 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.userinfo=response.data;
-				var split = $scope.userinfo.user.identityGivenDate.split("T");
-				var split2 = split[1].split("Z");
-				var split3 = split2[0].split(".");
-				$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
-
+				if($scope.userinfo.user.identityGivenDate){
+					var split = $scope.userinfo.user.identityGivenDate.split("T");
+					var split2 = split[1].split("Z");
+					var split3 = split2[0].split(".");
+					$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
+				}
 				console.log("IdentityGivenDate: "+$scope.userinfo.user.identityGivenDate);
 				if($scope.userinfo.user.identityGivenDate){
 					$scope.id_request = true;
