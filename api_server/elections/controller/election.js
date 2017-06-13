@@ -22,13 +22,13 @@ function new_election (req, res){
     })
 }
 
-
 function get_election(req, res) {
 
     Election.find().exec(function (err, elections) {
-        if(err)  return res.status(500).send({message:"Server Error"});
-        return res.status(200).send(elections);
         console.log(elections);
+        if(err) { return res.status(500).send({message:"Server Error"});}
+        return res.status(200).send(elections);
+
     });
 }
 
@@ -36,10 +36,10 @@ function get_shared_keys(req, res) {
   console.log("GET SHARED KEY")
   service.createSecretSharing("melectoral",function(shared_keys){
     console.log("SHARED KEYS: 0 = Error, 1 = Claves entragadas    " + shared_keys );
-    if(shared_keys == 0){
+    if(shared_keys === 0){
       return res.status(500).send({message: "Server Error"})
     }
-    if(shared_keys == 1){
+    if(shared_keys === 1){
       return res.status(404).send({message: "Las claves ya fueron entregadas"})
     }
     return res.status(200).send(shared_keys);
@@ -52,4 +52,4 @@ module.exports = {
     new_election,
     get_election,
     get_shared_keys
-}
+};

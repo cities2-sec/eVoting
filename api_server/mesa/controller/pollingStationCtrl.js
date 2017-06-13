@@ -76,7 +76,6 @@ function getResults(req, res) {
             }
             console.log(station.active);
             voting_ended = station.active;
-
         }
     );
 
