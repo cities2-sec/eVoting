@@ -3,7 +3,7 @@ angular.module('MainApp', ['ngStorage'])
 .controller('urnaController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
 	var bitlength = 128;
 	var userKeys;
-	$scope.censoKeys = {};
+	$scope.mesaKey = {};
 	$scope.userinfo =  {};
 	$scope.userKeys = {};
 	$scope.id_request = null;
@@ -47,12 +47,12 @@ angular.module('MainApp', ['ngStorage'])
 
 
 	//GET keys from CENSO
-	$scope.getCensoKeys = function(){
-		$http.get('/censo/key')
+	$scope.getMesaKeys = function(){
+		$http.get('/mesa/keys')
 		.then(function successCallback(response){
 			if(response.status == 200){
-				$scope.censoKeys=response.data;
-				console.log($scope.censoKeys);
+				$scope.mesaKey=response.data;
+				console.log($scope.mesaKey);
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
@@ -65,7 +65,7 @@ angular.module('MainApp', ['ngStorage'])
 	}
 
 
-	$scope.getCensoKeys();
+	$scope.getMesaKeys();
     $scope.idvotedParty={};
     $scope.file={};
 

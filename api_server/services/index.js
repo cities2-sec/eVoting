@@ -82,8 +82,9 @@ function createSecretSharing(req, callback){
       //var keys = new rsa.generateKeys(bitslength);
           // var shares = secrets.share(keys.privateKey.p.toString(),4,3);
       var keysPaillier = paillier.generateKeys(bitslength);
-      var privatePaillierShares = keysPaillier.privateKey.lambda+"%"+keysPaillier.privateKey.mu;
+      var privatePaillierShares = keysPaillier.privateKey.lambda+"f"+keysPaillier.privateKey.mu;
       console.log(privatePaillierShares);
+      /*
       var binary_privatePaillierShares = "";
           for (i=0; i < privatePaillierShares.length; i++) {
               binary_privatePaillierShares +=privatePaillierShares[i].charCodeAt(0).toString(2) + "";
@@ -92,16 +93,10 @@ function createSecretSharing(req, callback){
 
       var hex_privatePaillierShares = parseInt(binary_privatePaillierShares, 2).toString(16);
       console.log("Hex: "+hex_privatePaillierShares);
-
-
-      var shares = secrets.share(hex_privatePaillierShares,4,3);
-
-     /* console.log("Share Sharing Keys\n"+ shares);
-      var comb = secrets.combine(shares.slice(0,3));
-      console.log("The combination of 3 of 4 is correct?");
-      console.log( comb==keys.privateKey.p.toString());
+      */
+      var shares = secrets.share(privatePaillierShares.toString(),4,3);
+      console.log(shares);
       console.log("*********************************************\n");
-      console.log("\n****************SHARING KEYS***************");*/
 
           var key = new KeysPaillier({
             keytype: req,
@@ -129,7 +124,7 @@ function createSecretSharing(req, callback){
             }
           });
           var keysPailler = null;
-          /*
+
           key.save(function (err, KeyStored) {
               if (err) {
                   console.log(`ERROR: Not saved in Database: ${err}`);
@@ -140,9 +135,6 @@ function createSecretSharing(req, callback){
                   callback(shares);
               }
           })
-          */
-
-
 
       }
   })

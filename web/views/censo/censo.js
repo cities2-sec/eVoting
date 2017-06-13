@@ -184,7 +184,11 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				console.log("Message: "+response.data.message+ " | Anonim_id: " +response.data.anonim_id);
-				$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
+				//$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
+				var split = response.data.identityGivenDate.split("T");
+				var split2 = split[1].split("Z");
+				var split3 = split2[0].split(".");
+				$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
 
 				var dec_aid = bigInt(response.data.anonim_id,16);
 				console.log("decimal id   "+dec_aid.toString());
@@ -229,6 +233,11 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.userinfo=response.data;
+				var split = $scope.userinfo.user.identityGivenDate.split("T");
+				var split2 = split[1].split("Z");
+				var split3 = split2[0].split(".");
+				$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
+
 				console.log("IdentityGivenDate: "+$scope.userinfo.user.identityGivenDate);
 				if($scope.userinfo.user.identityGivenDate){
 					$scope.id_request = true;

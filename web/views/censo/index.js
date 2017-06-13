@@ -38,6 +38,52 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 $scope.login.username = "47915398G";
 $scope.login.password = "pass";
 
+
+
+$scope.token = function(){
+	var options = {
+			headers: {
+					'Content-Type': 'application/json',
+					//'Content-Length': body_sign.toString().length,
+					'Authorization': "Bearer "+ $localStorage.token
+			}
+	}
+	$http.get('censo/private',options)
+	.then(function successCallback(response){
+		if(response.status == 200){
+			console.log(response.data.message);
+			$window.location.href = "/censo";
+		}
+	},function errorCallback(response){
+		if(response.status == 400){ // Bad Request
+			console.log('Error: ' + response.data.message);
+			//$http.get('censo/login');
+			$localStorage.token = {};
+			$localStorage._id  = {};
+		}
+		if(response.status == 401){ // Unauthorized
+			console.log('Error: ' + response.data.message);
+			//$http.get('censo/login');
+			$localStorage.token = {};
+			$localStorage._id  = {};
+		}
+		if(response.status == 500){ //USER DOESN'T EXIST
+			console.log('Error: ' + response.data.message);
+			//$http.get('censo/login');
+			$localStorage.token = {};
+			$localStorage._id  = {};
+		}
+	})
+}
+
+$scope.token();
+
+
+
+
+
+
+
 	// Login NIF+pass
 	$scope.logIn = function (){
 		$scope.login.username = $scope.login.username.toUpperCase();

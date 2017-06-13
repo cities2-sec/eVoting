@@ -8,10 +8,11 @@ const Keys = require('../../model/SchemaKeys');
 const service = require('../../services');
 const secrets = require('secrets.js');
 const Election = require('../../elections/model/SchemaElection');
+const KeysPaillier = require('../../model/SchemaKeysPaillier');
 const bignum = require('bignum');
 
-function getKeys(res) {
-  Keys.findOne({ keytype: "melectoral" }, function (err, key){
+function getKeys(req,res) {
+  KeysPaillier.findOne({ keytype: "melectoral" }, function (err, key){
     if(err){
       return res.status(500).send({message: `Error on the petition: ${err}`});
     }
@@ -28,7 +29,7 @@ function sharedkeys(req, res){
 
   var kshared = req.body;
   console.log(req.body);
-  Keys.findOne({ keytype: "melectoral" }, function (err, key){
+  KeysPaillier.findOne({ keytype: "melectoral" }, function (err, key){
     if(err){
       return res.status(500).send({message: `Error on the petition: ${err}`});
     }
@@ -38,11 +39,20 @@ function sharedkeys(req, res){
     else{
       var comb = secrets.combine(kshared.slice(0,3));
       console.log("The combination of 3 of 4 is correct?");
-      console.log(comb==key.privateKey.p.toString());
-      if(comb==key.privateKey.p.toString()){
+      var privatePaillierShares = key.privateKey.lambda+"f"+key.privateKey.mu;
+      console.log(comb.toString());
+      console.log(privatePaillierShares.toString())
+      console.log("Las Claves son correctas?");
+      console.log(comb== privatePaillierShares.toString());
+      if(comb==privatePaillierShares.toString()){
         var election = {
           enabled: false
         }
+        var comb_split = privatePaillierShares.toString().split("f");
+        var lambda = comb_split[0];
+        var mu = comb_split[1];
+        console.log(lambda+"    "+mu);
+        privatePaillierShares = null;
 
         Election.update(election,function(err, user){
           if(err) {
