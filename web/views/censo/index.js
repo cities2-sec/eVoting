@@ -24,10 +24,9 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 }])
 
 .controller('mainController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
-	var userKeys;
+
 	$scope.censoKeys = {};
 	$scope.userinfo =  {};
-	$scope.userKeys = {};
 	$scope.login = {};
 
 	//ERROR MESSAGE
@@ -145,4 +144,5 @@ $scope.token();
 		 }
 	}
 	// Create File from Keys
+
 });
