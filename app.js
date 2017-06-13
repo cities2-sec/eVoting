@@ -28,6 +28,7 @@ const censo = require('./api_server/censo/routes/censo');
 const mesa = require ('./api_server/mesa/routes/pollingStation');
 const urna = require ('./api_server/urna/routes/ballotBox');
 const election = require('./api_server/elections/routes/electionroute');
+const ttp = require('./api_server/ttp/routes/ttp');
 
 /* App */
 app.use(allowCrossDomain);
@@ -41,6 +42,7 @@ app.use('/censo', censo);
 app.use('/mesa', mesa);
 app.use('/urna', urna);
 app.use('/election', election);
+app.use('/ttp', ttp);
 
 
 

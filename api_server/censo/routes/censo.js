@@ -18,6 +18,7 @@ api.get('/user/:_id', auth, userCtrl.getUser);// Comprobar qe es el mismo usuari
 
 //identityCtrl
 api.post('/identity/request', auth, identityCtrl.identityRequest);
+api.post('/identity/requestnr', auth, identityCtrl.identityRequestNR);
 //keyCtrl
 api.get('/key', keyCtrl.getKey);
 

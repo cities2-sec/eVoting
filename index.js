@@ -26,11 +26,20 @@ mongoose.connect(config.db, function (err, res) {
     keys.createKeys("censo");
     //keys.createKeys("urna");
     //keys.createSecretSharing("melectoral");
+    /*keys.createSecretSharing("melectoral",function(shared_keys){
+        console.log("hola");
+    });*/
+
+
 
     /* Server listening for HTTP */
-    app.listen(config.port, config.ip, function () {
+    app.listen(config.port, function () {
         console.log(`Running server on http://${config.ip}:${config.port}`);
     });
+    /*
+    app.listen(config.port, config.ip, function () {
+        console.log(`Running server on http://${config.ip}:${config.port}`);
+    });*/
 
     global.API = `http://${config.ip}:${config.port}`;
 
@@ -41,6 +50,7 @@ mongoose.connect(config.db, function (err, res) {
       var httpsServer = https.createServer(credentials, app);
 
       /* Server listening for HTTPS */
+      
       httpsServer.listen(config.secure_port, function () {
           console.log(`Running server on https://${config.ip}:${config.secure_port}`);
       });

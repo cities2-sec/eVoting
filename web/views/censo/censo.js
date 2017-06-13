@@ -1,7 +1,7 @@
 angular.module('MainApp', ['ngStorage'])
 
 .controller('censoController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
-	var bitlength = 128;
+	var bitlength;
 	var userKeys;
 	$scope.censoKeys = {};
 	$scope.userinfo =  {};
@@ -131,6 +131,8 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.censoKeys=response.data;
+			bitslength = response.data.publicKey.bits;
+			console.log(bitslength);
 				console.log($scope.censoKeys);
 			}
 		},function errorCallback(response){
@@ -142,6 +144,7 @@ angular.module('MainApp', ['ngStorage'])
 			}
 		})
 	}
+	/* Sin no repudio
 	// GET AnonimID from CENSO
 	$scope.getAnonimID = function(){
 
@@ -184,7 +187,11 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				console.log("Message: "+response.data.message+ " | Anonim_id: " +response.data.anonim_id);
-				$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
+				//$scope.userinfo.user.identityGivenDate = response.data.identityGivenDate;
+				var split = response.data.identityGivenDate.split("T");
+				var split2 = split[1].split("Z");
+				var split3 = split2[0].split(".");
+				$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
 
 				var dec_aid = bigInt(response.data.anonim_id,16);
 				console.log("decimal id   "+dec_aid.toString());
@@ -214,6 +221,145 @@ angular.module('MainApp', ['ngStorage'])
 			}
 		})
 	}
+	*/
+
+	$scope.getAnonimID_nonRepudiation = function() {
+		var r = bigInt.randBetween("0", "1e100");
+		$scope.r = r;
+
+		var nc = bigInt($scope.censoKeys.publicKey.n);
+		var ec = bigInt($scope.censoKeys.publicKey.e);
+		var nu = bigInt($scope.userKeys.publicKey.n);
+		var du = bigInt($scope.userKeys.privateKey.d);
+
+		// la identidad es la clave publica del usuario
+		pk = nu;
+		console.log("Identidad sin cegar: "+pk.toString(16));
+
+		// cegamso la identidad con r
+		var bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
+		var identity = bm.toString(16);//Hexadecimal
+
+		// preparo el primer mensaje enviando la identidad cegada para que la firme el censo
+		var body = JSON.stringify({
+			"msgid": 1,
+			"msg": identity
+		});
+
+		var options = {
+			headers: {
+				'Content-Type': 'application/json',
+				//'Content-Length': body_sign.toString().length,
+				'Authorization': "Bearer "+ $localStorage.token
+			}
+		}
+
+		$http.post('/censo/identity/requestnr',body, options)
+			.then(function successCallback(response){
+				var body = response.data;
+				//console.log(JSON.stringify(body));
+
+				$scope.cipheredID = body.C;
+
+				// comprobacion de Po
+				var unsignedPo = bigInt(body.Po, 16).modPow($scope.censoKeys.publicKey.e, $scope.censoKeys.publicKey.n);
+				var myPoString = body.src+"%"+body.dst+"%"+body.C;
+				var myPoHash = CryptoJS.SHA256(myPoString);
+				var PoHash = unsignedPo.toString(16);
+
+				if(PoHash == myPoHash) {
+					console.log("Po verificado");
+				}
+				else{
+					console.log("Po erroneo");
+					return;
+				}
+
+				// genero Pr para enviarlo en la response
+				var PrString = "B%A%"+body.C;
+				//console.log("PrString: "+PrString);
+				var PrHash = CryptoJS.SHA256(PrString).toString(CryptoJS.enc.Hex);
+				//console.log("Pr hash: "+PrHash);
+				var unsignedPr = bigInt(PrHash, 16);
+				//console.log("unsignedPr: "+unsignedPr.toString());
+				var signedPr = unsignedPr.modPow($scope.userKeys.privateKey.d.toString(), $scope.userKeys.publicKey.n.toString());
+				//console.log("signedPr: "+signedPr.toString());
+				var signedPrHash = signedPr.toString(16);
+				//console.log("signedPrHash: "+signedPrHash);
+
+				// envio la respuesta con la proof of reception
+				var msg2 = {
+					"msgid": 2,
+					"msg": {
+						"src": "B",
+						"dst": "A",
+						"Pr": signedPrHash,
+						"publicKey": {
+							"bits": $scope.userKeys.publicKey.bits,
+							"n": $scope.userKeys.publicKey.n.toString(16),
+							"e": $scope.userKeys.publicKey.e.toString(16)
+						}
+					}
+				}
+
+				$scope.sendMsg2_nonRepudiation(msg2);
+
+			},function errorCallback(response){
+				console.log("Error: "+response.status);
+				return;
+
+			})
+	}
+
+	$scope.sendMsg2_nonRepudiation = function (msg) {
+		var body = JSON.stringify(msg);
+
+		var options = {
+			headers: {
+				'Content-Type': 'application/json',
+				//'Content-Length': body_sign.toString().length,
+				'Authorization': "Bearer "+ $localStorage.token
+			}
+		}
+
+		//var result =  m.modPow(e, n);
+		$http.post('/censo/identity/requestnr',body, options)
+			.then(function successCallback(response){
+				var body = response.data;
+				// si usamos ctr solo hace falta la key
+				var keyHex = body.key;
+
+				var encryptedBytes = aesjs.utils.hex.toBytes($scope.cipheredID);
+				var aesCtr = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(keyHex));
+				var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+				var decryptedHex = aesjs.utils.hex.fromBytes(decryptedBytes);
+
+				// decryptedHex es la identidad cegada firmada por el censo
+				// lo descegamos
+				var nc = bigInt($scope.censoKeys.publicKey.n);
+				var r = bigInt($scope.r);
+				var dec_aid = bigInt(decryptedHex,16);
+				var identity_anonim =  dec_aid.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+
+
+				// Comprobacion de que el proceso es correcto
+				var ec = bigInt($scope.censoKeys.publicKey.e);
+				var sinFirma = identity_anonim.modPow(ec, nc);
+				console.log("***************** Comprobacion de la firma ******************");
+
+				console.log("Clava publica usuario: "+$scope.userKeys.publicKey.n.toString(16));
+				console.log("Identidad recibida sin firmar: "+sinFirma.toString(16));
+
+				if(sinFirma.toString(16) == $scope.userKeys.publicKey.n.toString(16)) {
+					console.log("Identidad obtenida correctamente");
+					$scope.fileID(identity_anonim.toString());
+				} else {
+					console.log("La identidad obtenida no es válida");
+				}
+			},function errorCallback(response){
+				console.log("Error: "+response.status);
+			})
+	}
 
 	$scope.getUser = function(){
 
@@ -229,6 +375,12 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.userinfo=response.data;
+				if($scope.userinfo.user.identityGivenDate){
+					var split = $scope.userinfo.user.identityGivenDate.split("T");
+					var split2 = split[1].split("Z");
+					var split3 = split2[0].split(".");
+					$scope.userinfo.user.identityGivenDate = split[0]+" "+split3[0];
+				}
 				console.log("IdentityGivenDate: "+$scope.userinfo.user.identityGivenDate);
 				if($scope.userinfo.user.identityGivenDate){
 					$scope.id_request = true;
@@ -250,7 +402,6 @@ angular.module('MainApp', ['ngStorage'])
 		})
 
 	}
-
 
 	$scope.token();
 	$scope.getCensoKeys();

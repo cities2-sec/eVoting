@@ -6,10 +6,15 @@
   "description": "Proyecto de voto electrónico",
   "main": "index.js",
   "scripts": {
+    "production":"node index.js",
     "prestart": "npm install",
     "postinstall": "bower install",
     "start": "nodemon index.js",
     "test": "bitslength=128 nodemon index.js"
+  },
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/cities2-sec/eVoting"
   },
   "keywords": [
     "rsa",
@@ -19,11 +24,17 @@
     "express",
     "mongodb"
   ],
+  "engines":{
+    "node": "~6.10.2",
+    "npm": "~3.10.10"
+  },
   "dependencies": {
+    "aes-js": "^3.1.0",
     "bcrypt-nodejs": "0.0.3",
     "bignum": "^0.12.5",
     "body-parser": "^1.16.0",
     "crypto": "0.0.3",
+    "crypto-js": "^3.1.9-1",
     "express": "^4.14.1",
     "ip": "^1.1.5",
     "jquery": "^3.2.1",
@@ -33,7 +44,8 @@
     "mongoose": "^4.9.7",
     "mongoose-unique-validator": "^1.0.5",
     "morgan": "^1.8.1",
-    "secrets.js": "^0.1.8"
+    "secrets.js": "^0.1.8",
+    "bower": "~1.8.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
