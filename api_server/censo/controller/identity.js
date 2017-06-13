@@ -114,27 +114,14 @@ function identityRequestNR(req, res) {
                     // Firma la identidad
                     var signedMsg = privateKey.sign(bignum(body.msg, 16)).toString(16);
 
-                    // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
-                    User.update({
-                            username: req.user.username
-                        }, {
-                            identityGivenDate: Date.now()
-                        },
-                        function(err, user){
-                            if(err) {
-                                console.log(err);
-                                return res.status(500).json("Server error");
-                            }
-
-                            removeSessionFromUsername(req.user.username);
-                            // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo
-                            var currentSession = {
-                                "username": req.user.username
-                            }
-                            // Empiezo el no repudio enviando el primer mensaje
-                            startNR(signedMsg, privateKey, res, currentSession);
-                        });
-
+                    removeSessionFromUsername(req.user.username);
+                    // Creo un objeto de sesión para guardar las cosas que necesitos durante todo el diálogo
+                    var currentSession = {
+                        "username": req.user.username,
+                        "signedID": signedMsg
+                    }
+                    // Empiezo el no repudio enviando el primer mensaje
+                    startNR(signedMsg, privateKey, res, currentSession);
                 }
                 else {
                     return res.status(500).json("No keys found");
@@ -261,7 +248,24 @@ function processNRMsg2(msg, privateKey, finalRes, currentSession) {
             console.log(JSON.stringify(body));
 
             console.log("Clave publicada en la ttp");
-            return finalRes.status(200).send(body);
+
+            // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
+            User.update({
+                    username: currentSession.username
+                }, {
+                    identityGivenDate: Date.now(),
+                    anonim_id: currentSession.signedID,
+                },
+                function(err, user){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).json("Server error");
+                    }
+                    return finalRes.status(200).send(body);
+
+                });
+
+
         });
     });
 
