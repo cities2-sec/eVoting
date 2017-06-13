@@ -26,8 +26,7 @@
   ],
   "engines":{
     "node": "~6.10.2",
-    "npm": "~3.10.10",
-    "mongod": ""
+    "npm": "~3.10.10"
   },
   "dependencies": {
     "aes-js": "^3.1.0",
