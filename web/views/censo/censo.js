@@ -1,7 +1,7 @@
 angular.module('MainApp', ['ngStorage'])
 
 .controller('censoController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
-	var bitlength = 128;
+	var bitlength = 128 || 1024;
 	var userKeys;
 	$scope.censoKeys = {};
 	$scope.userinfo =  {};
