@@ -3,7 +3,6 @@ var bignum = require('bignum');
 function lcm(a,b) {
     this.p = bignum(a);
     this.q = bignum(b);
-    //this.p.mul(this.q);
     return this.p.mul(this.q).div(this.p.gcd(this.q));
 }
 
@@ -33,7 +32,7 @@ paillier = {
         p = bignum.prime(this.bitlength / 2);
         do {
             q = bignum.prime(this.bitlength / 2);
-        } while (q.cmp(p) === 0 && q.gcd(p)==1);
+        } while (q.cmp(p) === 0 && q.gcd(p)===1);
 
         n = p.mul(q);
         keys.publicKey = new paillier.publicKey(this.bitlength,n);

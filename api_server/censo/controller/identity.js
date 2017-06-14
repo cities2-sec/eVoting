@@ -42,9 +42,9 @@ function identityRequest(req, res) {
 
                   // Firma la identidad
                   console.log("signid: " +bignum(body.signid,16));
-                  console.log("signid_2: " +parseInt(body.signid,16))
+                  console.log("signid_2: " +parseInt(body.signid,16));
                   var signedMsg = privateKey.sign(bignum(body.signid, 16)).toString(16);
-                  console.log("signedMsg: "+ signedMsg)
+                  console.log("signedMsg: "+ signedMsg);
 
                   // Por último intentamos actualizar el usuario para saber que le hemos dado indentidad
                   var user_update = {
@@ -280,7 +280,7 @@ var getSessionFromUsername = function(username) {
       }
   }
   return {};
-}
+};
 
 var removeSessionFromUsername = function(username) {
     for(var i = 0; i<sessions.length; i++) {
@@ -289,9 +289,9 @@ var removeSessionFromUsername = function(username) {
             return;
         }
     }
-}
+};
 
 module.exports = {
   identityRequest,
   identityRequestNR
-}
+};
