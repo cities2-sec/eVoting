@@ -9,5 +9,6 @@ const api = express.Router();
 
 api.post('/vote', ballotBoxCtrl.toVote);
 api.get('/open', ballotBoxCtrl.openBox);
+api.get('/kpaillier', ballotBoxCtrl.getKeysPaillier);
 
 module.exports = api;

@@ -3,6 +3,7 @@
  */
 
 const ballotBoxModel = require('../model/SchemaBallotBox');
+const KeysPaillier = require('../../model/SchemaKeysPaillier');
 var express = require('express');
 var router = express.Router();
 var paillier = require('../../module/paillier');
@@ -89,6 +90,23 @@ function encryptVotebyPaillier(vote) {
     }
 
     return cryptogram;
+}
+
+
+
+
+
+//getPaillierkEYS
+
+function getKeysPaillier(req, res) {
+
+    KeysPaillier.find(function (err, kPaillier) {
+        if (err) {
+            console.log(err);
+            return res.status(500).json("Server error");
+        }
+        res.status(200).json(kPaillier);
+    });
 }
 
 function toVote(req, res) {
@@ -178,5 +196,6 @@ function openBox(req, res) {
 //noinspection JSAnnotator
 module.exports = {
     toVote,
-    openBox
+    openBox,
+    getKeysPaillier
 };
