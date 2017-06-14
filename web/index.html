@@ -44,128 +44,34 @@
 		<div notifybar style="position:absolute;top:0;right:0"></div>
 
 		<!-- NAV BAR -->
-				<nav id="cabecera" class="navbar navbar-default">
-				  <div class="container-fluid">
-				    <div class="navbar-header">
-				      <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
-						</div>
-						<ul class="nav navbar-nav navbar-right">
-		          <li><a href="/censo/login">Censo</a></li>
-		          <li><a href="/urna">Urna</a></li>
-		          <li><a href="/home">Mesa Electoral</a></li>
-		        </ul>
-					</div>
-				</nav>
+		<nav id="cabecera" class="navbar navbar-default">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <a class="navbar-brand">I <span class="love" style="color:#ff6032">♥</span> eVoting</a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+		  <li><a href="/censo/login">Censo</a></li>
+		  <li><a href="/urna">Urna</a></li>
+		  <li><a href="/home">Mesa Electoral</a></li>
+		</ul>
+			</div>
+		</nav>
 
-
-
-		<div id="login-overlay" class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h3 class="modal-title" id="myModalLabel">Bienvenido al Censo Electoral</h3>
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <div class="col-xs-6">
-                      <div class="well">
-                          <form id="loginForm">
-                              <div class="form-group">
-                                  <label for="username" class="control-label">DNI</label>
-                                  <input type="text" class="form-control" id="username" name="username" autocomplete="on" required="" ng-model="login.username" title="Please enter your NIF">
-																	<span class="help-block"></span>
-                              </div>
-                              <div class="form-group">
-                                  <label for="password" class="control-label">Contraseña</label>
-                                  <input type="password" class="form-control" id="password" name="password" autocomplete="on"  required="" title="Please enter your password" ng-model="login.password">
-                              </div>
-                              <div id="alert" class="alert alert-warning text-center"  ng-show="showAlert">
-																<strong>Alerta!</strong> {{alertText}}</div>
-                              <button type="submit" class="btn btn-success btn-block" ng-click="logIn()" ng-disabled="!login.username || !login.password">Login</button>
-                          </form>
-                      </div>
-                  </div>
-                  <div class="col-xs-6">
-                      <p class="lead">Información:</p>
-                      <ul class="list-unstyled" style="line-height: 2">
-                          <li><span class="fa fa-check text-success"></span> Obtención de Identidad Anónima de votante</li>
-                          <li><span class="fa fa-check text-success"></span> Obtención de credenciales</li>
-                          <li><span class="fa fa-check text-success"></span> Para más información contacte con el Ministerio</li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-
-
-
-
-
-<!-- Botons
-
-		<div idclass="row">
+		<div idclass="row" style="margin-top: 50px;">
 			<div class="col-md-4 text-center">
-				<button id="censo" type="button" class="btn_index" href="#censo"></i></button>
+				<button id="censo" type="button" class="btn_index" href="/censo/login"></i></button>
 				<p> CENSO ELECTORAL </p>
 			</div>
 			<div class="col-md-4 text-center">
-				<button id="urna" type="button" class="btn_index"  href="urna.html"></i></button>
+				<button id="urna" type="button" class="btn_index"  href="/urna"></i></button>
 				<p> URNA </p>
 			</div>
 			<div class="col-md-4 text-center">
-				<button id="mesa_electoral" type="button" class="btn_index"  href="melectoral.html"></button>
+				<button id="mesa_electoral" type="button" class="btn_index"  href="/home"></button>
 				<p> MESA ELECTORAL </p>
 			</div>
 		</div>
- Botons -->
 
-		<div class="row">
-			<div class="panel panel-primary">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Censo</div>
-				<div class="panel-body">
-					<p>
-					<div class="col-sm-6 col-sm-offset-1 text-center">
-						<!--<button type="submit" class="btn btn-success btn-lg" ng-click="getCensoKeys()" >PedirClaves</button>-->
-						<button type="submit" class="btn btn-warning btn-lg" ng-click="createOurKey()">Create My Keys</button>
-						<p>
-						<button type="submit" class="btn btn-danger btn-lg" ng-click="getAnonimID_nonRepudiation()">Create Anonim ID</button>
-					</div>
-					</p>
-				</div>
-			</div>
-
-
-		<div class="panel panel-success">
-			<!-- Default panel contents -->
-			<div class="panel-heading">Urna</div>
-
-			<br />
-			<div class="container">
-				<div class="row">
-					<div class="col-md-6 col-md-offset-3">
-						<form class="form-horizontal well" role="form">
-							<div class="row" >
-								<div class="col-xs-4"  ng-repeat="party in parties">
-									<img src="./img/ELECCIONES.jpg" style="display:block;border-color:{{party.color}}" class="img-responsive img-radio">
-									<button type="button" id="{{party.id}}" style="background-color:{{party.color}};border-color:{{party.color}} " class="btn btn-primary btn-radio">{{ party.name }}</button>
-									<input type="checkbox" id="left-itemborder-color:{{party.color}} " class="hidden">
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6 col-sm-offset-1">
-					<div class="col-xs-4" ng-repeat="party in parties" >
-							<img src="http://placehold.it/160x100" class="img-responsive img-radio">
-							<button type="button" class="btn btn-primary btn-radio">{{ party.name }}</button>
-							<input type="checkbox" id="left-item" class="hidden">
-					</div>
-			</div>
-		</div>
-	</div>
 	</div>
 
 

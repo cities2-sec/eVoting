@@ -63,5 +63,7 @@ paillier.privateKey.prototype = {
         console.log("desencriptando...");
         return c.modPow(this.lambda,this.pubkey.n2).subtract(1).divide(this.pubkey.n).mod(this.pubkey.n).multiply(this.u).mod(this.pubkey.n);
     }
+
 };
 //module.exports = paillier;
+

@@ -1,7 +1,7 @@
 angular.module('MainApp', ['ngStorage'])
 
 .controller('censoController',function ($scope, $http, $localStorage, $sessionStorage, $window) {
-	var bitlength = 128 || 1024;
+	var bitlength = 1024;
 	var userKeys;
 	$scope.censoKeys = {};
 	$scope.userinfo =  {};
@@ -131,7 +131,7 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.censoKeys=response.data;
-				console.log($scope.censoKeys);
+				//console.log($scope.censoKeys);
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
@@ -350,6 +350,8 @@ angular.module('MainApp', ['ngStorage'])
 
 				if(sinFirma.toString(16) == $scope.userKeys.publicKey.n.toString(16)) {
 					console.log("Identidad obtenida correctamente");
+					var now = new Date();
+					$scope.userinfo.user.identityGivenDate = now.getFullYear()+"/"+now.getMonth()+"/"+now.getDate();
 					$scope.fileID(identity_anonim.toString());
 				} else {
 					console.log("La identidad obtenida no es válida");
@@ -400,7 +402,6 @@ angular.module('MainApp', ['ngStorage'])
 		})
 
 	}
-
 
 	$scope.token();
 	$scope.getCensoKeys();
