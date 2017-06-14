@@ -33,9 +33,6 @@ angular.module('MainApp', ['ngRoute','ngStorage'])
 	$scope.alertText ={};
 	$scope.showAlert = false;
 
-$scope.login.username = "47915398G";
-$scope.login.password = "pass";
-
 
 
 $scope.token = function(){
