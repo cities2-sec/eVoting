@@ -11,7 +11,7 @@ const schema = mongoose.Schema;
 
 const ballotBoxSchema =  new schema({
     voto: String,
-    id_anomin: String,
+    id_anonim: String,
     pk: String,
     voted: Boolean,
     partyid: String,

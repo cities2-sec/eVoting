@@ -43,8 +43,8 @@ function sharedkeys(req, res){
       console.log(comb.toString());
       console.log(privatePaillierShares.toString())
       console.log("Las Claves son correctas?");
-      console.log(comb== privatePaillierShares.toString());
-      if(comb==privatePaillierShares.toString()){
+      console.log(comb=== privatePaillierShares.toString());
+      if(comb===privatePaillierShares.toString()){
         var election = {
           enabled: false
         }
@@ -60,12 +60,15 @@ function sharedkeys(req, res){
               return res.status(500).json("Server error");
           }
           else{
-            res.status(200).send({message:"EMPEZANDO EL RECUENTO..."});
+              res.status(200).send({message:"EMPEZANDO EL RECUENTO..."});
+
+              var resultados = getResults();
+              return resultados;
           }
         });
       }
       else{
-          return res.status(400).send({message:"Claves Erroneas"});
+          return res.status(400).send({message:"Claves erróneas"});
       }
     }
   })
@@ -108,9 +111,9 @@ function getResults(req, res) {
 
         var resultado = {};
 
-        for (var i=0; i<npartidos; i++){
+        for (var i=1; i<=npartidos; i++){
 
-            resultado[ npartidos + 'partido' ] = Math.floor((resultados / Math.pow(10,npartidos-1)) % 10);
+            resultado[ i + 'partido' ] = Math.floor((resultados / Math.pow(10,npartidos-1)) % 10);
         }
 
         /*var resultado = {
@@ -125,26 +128,32 @@ function getResults(req, res) {
     }
 
     if (voting_ended) {
-        var votes = {};
+        var votes2 = {};
         var num_votes = 0;
         var n = 0;
         var mu = 0;
         var lambda = 0;
         var data = {};
+        var num_parties2 = 0;
 
         BallotBox.find(function (err, response) {
             if (err)
                 res.send(err);
             data = response;
-            votes = data.votes;
+            votes2 = data.votes;
             num_votes = data.numOfVotes;
             n = data.cipher.n;
             mu = data.cipher.mu;
             lambda = data.cipher.lambda;
+            num_parties2 = data.num_parties;
         });
 
-        results = countVotes(votes, num_votes, n, mu, lambda);
-        return res.status(200).send(results);
+        results = countVotes(votes2, num_votes, n, mu, lambda, num_parties2);
+        var info = {
+            results,
+            votes2
+        }
+        return res.status(200).send(info);
     }
     else {
         return res.status(403).send("La votació no ha acabat");
