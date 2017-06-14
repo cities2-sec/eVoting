@@ -198,24 +198,6 @@ angular.module('MainApp', ['ngStorage'])
         console.log("votoooo");
         console.log(voto);
 
-        //send to BD
-        $http.post('/urna/vote', {voto: voto})
-            .then(function successCallback(response) {
-                if (response.status == 200) {
-                    console.log(response.status + " " + response.data.message);
-
-                }
-            }, function errorCallback(response) {
-                if (response.status == 500) {
-                    console.log(response.data.message);
-                }
-                if (response.status == 400) {
-                    console.log('Error: ' + response.data.message);
-                }
-                if (response.status == 500) {
-                    console.log('Error: ' + response.data.message);
-                }
-                if (response.status == 403) {
 
 		var voto = $scope.idvotedParty + '%' + $scope.file.id + '%' + $scope.file.pk;
 		console.log("votoooo");
@@ -247,7 +229,6 @@ angular.module('MainApp', ['ngStorage'])
 
                 }
 
-                if (response.status == 404) {
 
                 if(response.status === 404){
 
