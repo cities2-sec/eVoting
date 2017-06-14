@@ -9,14 +9,12 @@ const mongoose = require('mongoose');
 var mongooseUniqueValidator = require('mongoose-unique-validator');
 const schema = mongoose.Schema;
 
-const ballotBoxSchema =  new schema({
+const ballotBoxSchema = new schema({
     voto: String,
     id_anomin: String,
-    pk: String,
-    voted: Boolean,
-    partyid: String,
-    numOfVotes: Number,
-    timestamp: Date
+    hash_voto: String,
+    firma_voto : String
+    //numOfVotes: Number
 });
 
 ballotBoxSchema.plugin(mongooseUniqueValidator);

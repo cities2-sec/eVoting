@@ -2,21 +2,19 @@
  * Created by VictorMiranda on 03/02/2017.
  */
 
-const ballotBoxModel = require('../model/SchemaBallotBox');
 const KeysPaillier = require('../../model/SchemaKeysPaillier');
 var express = require('express');
 var router = express.Router();
 var paillier = require('../../module/paillier');
-//var rsa = require('./rsa-bignum');
-
+const bcrypt = require('bcrypt-nodejs');
 var rsa = require('../../module/rsa');
+const Keys = require('../../model/SchemaKeys');
 
 var bignum = require('bignum');
 var CryptoJS = require('crypto');
 
 const BallotBox = require('../model/SchemaBallotBox');
 const service = require('../../services');
-
 
 
 function hexToAscii(hexx) {
@@ -74,8 +72,8 @@ function encryptVotebyPaillier(vote) {
     }
 
     function generateG(n) {
-        var alpha = bignum.rand(0,n);
-        var beta = bignum.rand(0,n);
+        var alpha = bignum.rand(0, n);
+        var beta = bignum.rand(0, n);
 
         var resultado_f1 = bignum(alpha).mul(bignum(n)).add(1);
         var g = bignum(resultado_f1).mul(bignum(beta).pown(n, bignum(n).pow(2)));
@@ -93,9 +91,6 @@ function encryptVotebyPaillier(vote) {
 }
 
 
-
-
-
 //getPaillierkEYS
 
 function getKeysPaillier(req, res) {
@@ -111,22 +106,97 @@ function getKeysPaillier(req, res) {
 
 function toVote(req, res) {
 
-    var voto = req.body.voto;
-
-    var sp = voto.split("%");
-    var partyid = sp[0];
-    var id = sp[1];
-    var pk = sp[2];
-
-    //busca por la id_anonim si esta en la BD
-
-    //si lo es desencriptamos con la publica del usuario
+    var votoencrip_firmado = bignum(req.body.votoencrip_firmado);
+    var Hash = req.body.Hash;
+    var CpubKey = req.body.CpubKey;
+    console.log("CpubKey :" + CpubKey);
+    var spl = CpubKey.split(".");
+    var CpubKey_e = bignum(spl[0],16);
+    console.log("E: "+CpubKey_e);
+    console.log("split:"+spl[1]);
+    var CpubKey_n = bignum(spl[1], 16);
+    console.log("CpubKey :" + CpubKey_n);
+    var id_anonim = bignum(req.body.id_anonim);
+    var CensoKey;
 
     console.log("Voto BD:");
-    console.log(sp[0]);
-    console.log(sp[1]);
-    console.log(sp[2]);
+    console.log("Voto Encriptado y firmado: " +votoencrip_firmado);
+    console.log("HASH: "+Hash);
+    console.log("CLAVE PUBLICA: "+CpubKey);
+    console.log("ID_ANONIMA: "+id_anonim);
+    //buscamos en la Urna_Bd si el usuario ha votado
+    BallotBox.findOne({id_anomin: id_anonim}, function (err, voto) {
+        if (err) {
+            return res.status(500).json({message: `Error on the petition: ${err}`});
+        }
+        if (voto) {
+            return res.status(400).send({message: "Ya has votado, Al carrer"})
+        }
+        else {
+            //Verificamos la id_anonima con la Kpublica del censo
+            Keys.findOne({keytype: "censo"}, function (err, key) {
+                if (err) {
+                    return res.status(500).send({message: `Error on the petition: ${err}`});
+                }
+                else {
+                    CensoKey = key.publicKey;
+                    console.log("CENSO KEYS: "+CensoKey);
 
+                    var verID = id_anonim.powm(bignum(CensoKey.e), bignum(CensoKey.n));
+                    console.log("ID: "+ verID);
+                    console.log("PubKey_n: "+ CpubKey_n);
+                    console.log(verID.toString() == CpubKey_n.toString());
+                    if(verID.toString() == CpubKey_n.toString()){
+                        console.log("ID VÁLIDA");
+
+                        // VERIFICAR EL VOTO esta firmado por le usuario de la identidad anonima
+                        var voto_verify = bignum(votoencrip_firmado).powm(CpubKey_e, verID.toString());
+                        console.log("Verificacion del voto: "+ voto_verify.toString());
+
+                        //VERIFICAR EL VOTO TIENE FORMATO CORRECTO Y NO ME LO HAN CAMBIADO
+                        //VERIFICAR EL HASHHHHHH
+
+
+                        //GUARDAR EN LA BASE DE DATOS:
+
+                        var save_voto = new BallotBox ({
+                            voto: voto_verify.toString(), // VOTO ENCRIPTADO
+                            id_anomin: id_anonim.toString(), //ID ANONIMA
+                            //hash_voto: String,
+                            firma_voto : votoencrip_firmado.toString() // VOTO ENCRIPTADO Y FIRMADO CON LA PRIVADA DEL USER
+                        });
+
+                        save_voto.save(function (err) {
+                            if(err) {
+                                console.log(err);
+                                return res.status(500).send({message:"Server error"});
+                            }
+                            return res.status(200).send({message:"VOTO EN LA URNA"});
+                        })
+                        var num;
+
+                        BallotBox.find(function (err,ballotbox) {
+                            if(err){
+                                return res.status(500).send({message:"Server error"});
+                            }
+                            num = ballotbox.numOfVotes+1;
+                            BallotBox.update({numOfVotes: num },function (err) {
+                                if(err){
+                                    return res.status(500).send({message:"Server error"});
+                                }
+                            });
+                        });
+                    }
+                    else{
+                        return res.status(400).send({message: "ID Anónima no valida"});
+
+                    }
+                }
+            })
+        }
+    });
+
+    //si lo es desencriptamos con la publica del usuario
 }
 
 /*

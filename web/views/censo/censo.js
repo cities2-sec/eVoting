@@ -118,6 +118,7 @@ angular.module('MainApp', ['ngStorage'])
 		userKeys = rsa.generateKeys(bitlength);
 		$scope.userKeys = userKeys;
 		console.log(userKeys);
+		console.log("NNNNNN:"+userKeys.publicKey.n.toString());
 		var sKey = userKeys.privateKey.d.toString(16);
 		var pKey = userKeys.privateKey.publicKey.e.toString(16);
 		var nKey = userKeys.privateKey.publicKey.n.toString(16);
@@ -131,7 +132,7 @@ angular.module('MainApp', ['ngStorage'])
 		.then(function successCallback(response){
 			if(response.status == 200){
 				$scope.censoKeys=response.data;
-				//console.log($scope.censoKeys);
+				console.log($scope.censoKeys);
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
@@ -232,7 +233,9 @@ angular.module('MainApp', ['ngStorage'])
 
 		// la identidad es la clave publica del usuario
 		pk = nu;
-		console.log("Identidad sin cegar: "+pk.toString(16));
+		var pk_hex = pk.toString(16);
+		console.log("Identidad sin cegarhex: "+pk.toString(16));
+		console.log("Identidad sin cegarhex--dec:"+bigInt(pk_hex,base=16));
 
 		// cegamso la identidad con r
 		var bm = pk.multiply(r.modPow(ec, nc)).mod(nc);
