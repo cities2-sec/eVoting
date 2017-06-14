@@ -21,12 +21,15 @@
 
 #censo {
   background-image: url('/img/censo.jpg');
+  background-size: cover;
 }
 #urna {
   background-image: url('/img/urna.jpg');
+  background-size: cover;
 }
 #mesa_electoral {
   background-image: url('/img/mesaelectoral.jpg');
+  background-size: cover;
 }
 .btn_index{
   background-size: 200px 200px;
