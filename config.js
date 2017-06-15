@@ -7,5 +7,5 @@ module.exports = {
     //HEROKU db varible:
     db: process.env.MONGODB_URI || 'mongodb://localhost/evoting',
     SECRET_TOKEN: 'tokenproyect',
-    bitslength : process.env.bitslength || 1024 || 2048 // It must be more than 1028 o equal at least in testmode 128
+    bitslength : process.env.bitslength || 1024  // It must be more than 1028 o equal at least in testmode 128
 };

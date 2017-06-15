@@ -1,5 +1,8 @@
 const TtpKeys = require('../model/SchemaTtpKey.js');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
+const Keys = require('../../model/SchemaKeys');
+const bignum = require('bignum');
 
 
 function getKey (req, res) {
@@ -45,12 +48,58 @@ function postKey (req, res) {
         }
         else {
             console.log("[TTP] Clave actualizada");
-            return res.status(200).send(key);
+
+            // Crear proof of publication
+
+            var PkpString = "TTP%A%B%"+body.key;
+            var hash = crypto.createHash('sha256');
+            hash.update(PkpString);
+            var PkpHash = hash.digest('hex');
+            //var PkpHash = crypto.createHash('sha256').update(PkpString).digest('base64');
+            console.log("PkpHash: "+PkpHash);
+            Keys.findOne({ keytype: "ttp" } , function (err, ttpKeys) {
+                if (err) {
+                    console.log("Keys not found " + err);
+                    return res.status(500).json("Server error");
+                }
+                if (ttpKeys) {
+                    var publicKey = new rsa.publicKey(ttpKeys.publicKey.bits, ttpKeys.publicKey.n, ttpKeys.publicKey.e);
+                    var privateKey = new rsa.privateKey(ttpKeys.privateKey.p, ttpKeys.privateKey.q, ttpKeys.privateKey.d, ttpKeys.privateKey.phi, publicKey);
+                    //var unsignedPkp = bignum(PkpHash, 16);
+                    //console.log("unsignedPkp: "+unsignedPkp.toString());
+                    var Pkp = privateKey.sign(bignum.fromBuffer(Buffer.from(PkpHash, 'hex')));
+                    console.log("Pkp: "+Pkp.toString(16));
+                    var response = {
+                        "key": key,
+                        "Pkp": Pkp.toString(16)
+                    }
+                    return res.status(200).send(JSON.stringify(response));
+                }
+            });
+
+
         }
     });
 }
 
+function getTtpKeys (req, res) {
+    Keys.findOne({ keytype: "ttp" }, function (err, key){
+        if(err){
+            return res.status(500).send({message: `Error on the petition: ${err}`});
+        }
+        if(!key){
+            return res.status(404).send({message: `Key does not exist`});
+        }
+        else{
+            res.status(200).send({publicKey : key.publicKey});
+        }
+    })
+}
+
+
+
 module.exports = {
     getKey,
-    postKey
+    postKey,
+    getTtpKeys
 }

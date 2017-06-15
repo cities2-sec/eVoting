@@ -259,10 +259,9 @@ function processNRMsg2(msg, privateKey, finalRes, currentSession) {
                 function(err, user){
                     if(err) {
                         console.log(err);
-                        return res.status(500).json("Server error");
+                        return finalRes.status(500).json("Server error");
                     }
                     return finalRes.status(200).send(body);
-
                 });
 
 
