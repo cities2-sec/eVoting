@@ -10,7 +10,7 @@
     "prestart": "npm install",
     "postinstall": "bower install",
     "start": "nodemon index.js",
-    "test": "bitslength=128 nodemon index.js"
+    "test": "bitslength=1024 nodemon index.js"
   },
   "repository":{
     "type": "git",
