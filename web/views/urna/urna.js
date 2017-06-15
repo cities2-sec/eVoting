@@ -2,6 +2,10 @@ angular.module('MainApp', ['ngStorage'])
 
     .controller('urnaController', function ($scope, $http, $localStorage, $sessionStorage, $window) {
 
+        $scope.alertText ={};
+        $scope.showAlert = false;
+
+
         $scope.mesaKey = {};
         $scope.userinfo = {};
         $scope.userKeys = {};
@@ -11,8 +15,11 @@ angular.module('MainApp', ['ngStorage'])
         $scope.parties = {};
         //encriptarPaillier
         function encryptPubkeyPaillier(m, r, n, g) {
+            console.log("m: " +m);
             var n2 = bigInt(n).pow(2);
-            return (bigInt(g).modPow(m, n2).mod(n2)).multiply(r.modPow(n, n2)).mod(n2);
+
+           // return    (bigInt(g).modPow(m, n2)).multiply(r.modPow(n, n2)).mod(n2);
+            return    (bigInt(g).mod(bigInt(m))).multiply(bigInt(r).modPow(bigInt(n), bigInt(n2)));
         }
 
         function blindMsg(message, random, e, n) {
@@ -168,13 +175,13 @@ angular.module('MainApp', ['ngStorage'])
             });
         }
 
-        /*
+
          $scope.vote = function(id) {
          console.log(id);
          $scope.idvotedParty = id;
          console.log($scope.idvotedParty);
          };
-         */
+
 
         $scope.voteConfirm = function () {
             //peticion para clavePaillier
@@ -183,12 +190,37 @@ angular.module('MainApp', ['ngStorage'])
 
                 //console.log(response);
                 //console.log(response.data[0].publicKey.n);
-
-                var msgHEX = convertToHex($scope.idvotedParty); //voto por el numero de id del candidato
-                var msgToInt = bigInt(msgHEX, 16);
+                console.log("HE VOTADO A :"+$scope.idvotedParty.toString())
+                //var msgHEX = convertToHex($scope.idvotedParty); //voto por el numero de id del candidato
+                var msgToInt = bigInt($scope.idvotedParty.toString());
+                console.log("MSGTOINT: "+ msgToInt);
                 var n = response.data[0].publicKey.n;
                 var g = response.data[0].publicKey.g;
-                var rand = bigInt.randBetween(0, n);
+
+                var alpha = bigInt.randBetween(0, n);
+                var beta = bigInt.randBetween(0, n);
+
+                //var rand = (bigInt(alpha).multiply(n).add(1)).multiply(beta.modPow(n,n));
+
+                var rand = generateR();
+
+
+                function generateR() {
+                    do
+                    {
+                        r = bigInt.randBetween(0, n);
+                    }
+                    while (bigInt(r).compare(n) >= 0 || bigInt.gcd(r, bigInt(n).pow(2)) != 1);
+
+                    return r;
+                }
+
+
+                //var rand = bigInt.randBetween(0, n);
+
+                console.log("Random " + rand.toString());
+                console.log(rand.toString());
+                console.log("n:" +n +" g: "+g);
 
                 /*
                  if ($scope.idvotedParty.id == '01') {var voto = '001';}
@@ -197,6 +229,8 @@ angular.module('MainApp', ['ngStorage'])
 
                 //encriptar el voto con la publica de la mesa usando paillier
                 var Pencriptado = encryptPubkeyPaillier(msgToInt, rand, n, g);
+                console.log("VOTO ENCRIPTADO: "+ Pencriptado.toString());
+                console.log(Pencriptado.toString());
                 var VotoEncryptado = Pencriptado.toString(); //voto que el votante mismo encripta
                 var id_anonim = $scope.file.id;
 
@@ -208,6 +242,9 @@ angular.module('MainApp', ['ngStorage'])
                 console.log("pKey_e  " + spl1[0]);
                 var pKey_n = bigInt(spl1[1], base = 16);
                 console.log("pKey_n " + spl1[1]);
+                console.log(pKey_n);
+
+
 
                 var priKey = $scope.file.privk;
                 var spl2 = priKey.split(".");
@@ -218,7 +255,9 @@ angular.module('MainApp', ['ngStorage'])
                 console.log("priKey_n " + spl2[1]);
                 var m = bigInt(VotoEncryptado);
                 //firmar voto encriptado con RSA con cLAVE PRIVADA
-                var VotoEncriptadoFirmar = m.modPow(priKey_d, pKey_n); //m^d x r mod n
+                var VotoEncriptadoFirmar = bigInt(m).modPow(bigInt(priKey_d), bigInt(pKey_n)); //m^d x r mod n
+                console.log('Votoencriptado firmado 16: ' + VotoEncriptadoFirmar.toString());
+
                 console.log('Votoencriptado firmado: ' + VotoEncriptadoFirmar.toString(16));
                 //console.log(Krsa.publicKey);
 
@@ -243,13 +282,19 @@ angular.module('MainApp', ['ngStorage'])
                     .then(function successCallback(response) {
                         if (response.status === 200) {
                             console.log(response.status + " " + response.data.message);
+                            $scope.alertText =response.data.message;
+                            $scope.showAlert = true;
                         }
                     }, function errorCallback(response) {
                         if (response.status === 500) {
                             console.log(response.data.message); // ERROR SERVER
+                            $scope.alertText =response.data.message;
+                            $scope.showAlert = true;
                         }
                         if (response.status === 400) {
                             console.log('Error: ' + response.data.message);
+                            $scope.alertText =response.data.message;
+                            $scope.showAlert = true;
                         }
                     })
                 //console.log("tuvoto " + tuvoto );

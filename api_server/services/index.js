@@ -110,7 +110,7 @@ function createSecretSharing(req, callback){
             },
             privateKey: {
                 lambda: keysPaillier.privateKey.lambda.toString(),
-                pubkey: keysPaillier.privateKey.pubkey.toString(),
+                //pubkey: keysPaillier.privateKey.pubkey.toString(),
                 mu: keysPaillier.privateKey.mu.toString(),
                 u: keysPaillier.privateKey.u.toString(),
                 publicKey: {

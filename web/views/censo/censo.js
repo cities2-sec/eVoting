@@ -222,6 +222,13 @@ angular.module('MainApp', ['ngStorage'])
 	}
 	*/
 
+    $scope.signout= function(){
+        $window.location.href = "/censo/login";
+        $localStorage.token = {};
+        $localStorage._id  = {};
+
+	};
+
 	$scope.getAnonimID_nonRepudiation = function() {
 		var r = bigInt.randBetween("0", "1e100");
 		$scope.r = r;
