@@ -62,7 +62,7 @@ angular.module('MainApp', ['ngStorage'])
  }
 
  $scope.fileKey = function(sharedkeys){
-	 for(i=0; i<sharedkeys.length;i++){
+	 for(i=1; i<=sharedkeys.length;i++){
 			 var eVoting = new Blob([sharedkeys[i]],
 			 {type: "text/plain;charset=utf-8"});
 			 saveAs(eVoting, "Sharedkey_Number_"+i+".txt");
