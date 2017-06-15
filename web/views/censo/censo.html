@@ -95,6 +95,9 @@
 		                  <button  class="btn btn-warning "ng-click="createOurKey()" ng-show="!userinfo.user.identityGivenDate">Crear Claves</button>
 											<button  class="btn btn-danger" ng-click="getAnonimID_nonRepudiation()" ng-disabled="!id_request" ng-show="!userinfo.user.identityGivenDate">Petición ID Anónima</button>
 											</div>
+							<div id="alert2" class="alert alert-warning text-center" ng-show="showAlert" style="margin-top: 15px;">
+								<strong>Alerta!</strong> {{alertText}}
+							</div>
 		                </div>
 		              </div>
 		            </div>

@@ -11,6 +11,9 @@ angular.module('MainApp', ['ngStorage'])
 	console.log($localStorage.token);
 	console.log($localStorage._id);
 
+	$scope.showAlert = false;
+	$scope.alertText = "";
+
 	//TOKEN
 	$scope.token = function(){
 		var options = {
@@ -268,13 +271,11 @@ angular.module('MainApp', ['ngStorage'])
 				var myPoHash = CryptoJS.SHA256(myPoString);
 				var PoHash = unsignedPo.toString(16);
 
-
 				if(PoHash == myPoHash) {
 					console.log("Po verificado");
 				}
 				else{
 					console.log("Po erroneo");
-					return;
 				}
 
 				// genero Pr para enviarlo en la response
@@ -307,6 +308,8 @@ angular.module('MainApp', ['ngStorage'])
 				$scope.sendMsg2_nonRepudiation(msg2);
 
 			},function errorCallback(response){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un adminstrador";
 				console.log("Error: "+response.status);
 				return;
 
@@ -338,6 +341,8 @@ angular.module('MainApp', ['ngStorage'])
 				$http.get('/ttp/keys')
 					.then(function successCallback(response){
 						if(response.status != 200){
+							$scope.showAlert = true;
+							$scope.alertText = "TTP no disponible, contacte con un administrador";
 							console.log("Can't get keys from ttp");
 							return;
 						}
@@ -375,7 +380,10 @@ angular.module('MainApp', ['ngStorage'])
 							var now = new Date();
 							$scope.userinfo.user.identityGivenDate = now.getFullYear()+"/"+now.getMonth()+"/"+now.getDate();
 							$scope.fileID(identity_anonim.toString());
+							$scope.showAlert = false;
 						} else {
+							$scope.showAlert = true;
+							$scope.alertText = "La identidad obtenida no es válida, vuelvelo a intentar";
 							console.log("La identidad obtenida no es válida");
 						}
 
@@ -392,6 +400,8 @@ angular.module('MainApp', ['ngStorage'])
 
 
 			},function errorCallback(response){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un administrador";
 				console.log("Error: "+response.status);
 			})
 	}
@@ -425,6 +435,8 @@ angular.module('MainApp', ['ngStorage'])
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un administrador";
 				console.log(response.data.message);
 			}
 			if(response.status == 404){
