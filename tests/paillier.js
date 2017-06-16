@@ -1,6 +1,5 @@
 const Keys = require('../api_server/model/SchemaKeys');
 const bignum = require('bignum');
-const keys = require('../api_server/services');
 const mongoose = require('mongoose');
 const config = require('../config');
 const rsa = require('../api_server/module/rsa');
@@ -22,7 +21,6 @@ mongoose.connect(config.db, function (err, res) {
 
 var start = function () {
     Keys.findOne({keytype: "userTest"}, function (err, key) {
-        console.log("hola");
         if (err) {
             console.log("Keys not found " + err);
         }
@@ -42,22 +40,19 @@ var start = function () {
                     //var censoPrivateKey = new rsa.privateKey(keyCenso.privateKey.p, keyCenso.privateKey.q, keyCenso.privateKey.d, keyCenso.privateKey.phi, publicKey);
 
                     //console.log(JSON.stringify(censoPrivateKey));
-                    //var bnum = bignum(2);
-                    //console.log(bnum.toString());
-                    /*
-                     var firma2 = censoPrivateKey.sign(bignum(2));
-                     var desfirma2 = censoPrivateKey.verify(firma2);
-                     console.log("firma2: "+firma2);
-                     console.log("desfirma2: "+desfirma2);
+                    var bnum = bignum(2);
+                    console.log(bnum.toString());
 
                      console.log("n: "+ keyCenso.publicKey.n);
                      console.log("e: "+ keyCenso.publicKey.e);
 
-                     var firma = bnum.powm(keyCenso.privateKey.d, keyCenso.publicKey.n);
-                     var desfirma = firma.powm(keyCenso.publicKey.e, keyCenso.publicKey.n);
+                     //var firma = bnum.powm(keyCenso.privateKey.d, keyCenso.publicKey.n);
+                     //var desfirma = firma.powm(keyCenso.publicKey.e, keyCenso.publicKey.n);
+                    var firma = bnum.powm(key.privateKey.d, key.publicKey.n);
+                    var desfirma = firma.powm(key.publicKey.e, key.publicKey.n);
                      console.log("firma: "+firma);
                      console.log("desfirma: "+desfirma);
-                     */
+
 
 
                     //console.log("Public Key N: "+ keyCenso.publicKey.n);
@@ -78,17 +73,25 @@ var start = function () {
                                 var voto = 100; //1 100 10000
                                 var rand = generateR(keyMesa.publicKey.n);
 
-                                var voto_encriptado = encryptPubkeyPaillier(voto, rand, keyMesa.publicKey.n, keyMesa.publicKey.g);
+                                console.log(keyMesa.publicKey.n+"            "+keyMesa.publicKey.g)
+
+                                var voto_encriptado = bignum(111111111111111111111111111111);
+
+                                //var voto_encriptado = bignum(encryptPubkeyPaillier(voto, rand, keyMesa.publicKey.n, keyMesa.publicKey.g));
                                 console.log("Voto encriptado: " + voto_encriptado);
 
-                                var VotoEncriptadoFirmar = bignum(voto_encriptado).powm(key.privateKey.d, key.publicKey.n); //m^d x r mod n
-                                console.log("Voto Encriptadofirmado:"+VotoEncriptadoFirmar);
 
-                                var voto_verify = VotoEncriptadoFirmar.powm(key.publicKey.e, key.publicKey.n);
+
+                                var VotoEncriptadoFirmar = bignum(voto_encriptado).powm(key.privateKey.d, key.publicKey.n); //m^d x r mod n
+                                console.log("Voto Encriptadofirmado:"+VotoEncriptadoFirmar.toString());
+
+                                var voto_verify = bignum(VotoEncriptadoFirmar).powm(key.publicKey.e, key.publicKey.n);
                                 console.log("Voto Verificado igual a encriptado: "+voto_verify);
 
 
                                 console.log("N: "+ key.publicKey.n);
+                                console.log("E: "+ key.publicKey.e);
+                                console.log("D: "+ key.privateKey.d);
                                 votar(keyMesa, id_anonima, voto_encriptado, VotoEncriptadoFirmar, key.publicKey.n, key.publicKey.e);
                             }
                         });
@@ -123,6 +126,9 @@ var votar = function (keyMesa, id, voto_encriptado, voto_encriptado_firmado, pub
 
 };
 
+var cipher = encryptPubkeyPaillier(10, 35145, 126869, 6497955158);
+
+console.log("RESULTADO VOTO c_i:" + cipher);
 
 function encryptPubkeyPaillier(m, r, n, g) {
     console.log("m: " + m);

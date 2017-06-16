@@ -15,7 +15,7 @@ const keys = require('./api_server/services');
 const https = require('https');
 
 /* Connexion to Mongodb */
-//mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 mongoose.connect(config.db, function (err, res) {
     if(err){
         return console.log(`ERROR: connecting to Database: ${err}`);
