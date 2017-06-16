@@ -97,11 +97,12 @@ function getResults(req, res) {
          http://security.hsr.ch/msevote/seminar-papers/HS09_Homomorphic_Tallying_with_Paillier.pdf
          */
 
-        var producto = 1;
+        var producto = bignum(1);
         var n2=bignum(n).pow(2);
 
         for (var i = 0; i < nvotos; i++) {
-            producto = producto * votos[i];
+
+            producto = bignum(producto).mul(bignum(votos[i]));
         }
 
         var tally = bignum(producto).mod(n2);
