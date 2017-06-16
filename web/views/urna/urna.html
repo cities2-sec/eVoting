@@ -100,8 +100,15 @@
 								<input type="checkbox" id="left-itemborder-color:{{party.color}} " class="hidden">
 							</div>
 						</div>
-						<button type="button" ng-click="voteConfirm()" id="voteConfirm" class="btn btn-primary ">Confirm </button>
 					</form>
+				<div id="alert" class="alert alert-warning text-center" ng-show="showAlert">
+					<strong>Alerta!</strong> {{alertText}}
+				</div>
+				<div>
+						<span class="pull-right">
+						<button type="button" align="right" ng-click="voteConfirm()" id="voteConfirm" class="btn btn-primary ">VOTAR</button>
+						</span>
+				</div>
 				</div>
 			</div>
 

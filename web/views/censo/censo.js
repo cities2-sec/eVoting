@@ -11,6 +11,9 @@ angular.module('MainApp', ['ngStorage'])
 	console.log($localStorage.token);
 	console.log($localStorage._id);
 
+	$scope.showAlert = false;
+	$scope.alertText = "";
+
 	//TOKEN
 	$scope.token = function(){
 		var options = {
@@ -222,6 +225,13 @@ angular.module('MainApp', ['ngStorage'])
 	}
 	*/
 
+    $scope.signout= function(){
+        $window.location.href = "/censo/login";
+        $localStorage.token = {};
+        $localStorage._id  = {};
+
+	};
+
 	$scope.getAnonimID_nonRepudiation = function() {
 		var r = bigInt.randBetween("0", "1e100");
 		$scope.r = r;
@@ -273,7 +283,6 @@ angular.module('MainApp', ['ngStorage'])
 				}
 				else{
 					console.log("Po erroneo");
-					return;
 				}
 
 				// genero Pr para enviarlo en la response
@@ -306,6 +315,8 @@ angular.module('MainApp', ['ngStorage'])
 				$scope.sendMsg2_nonRepudiation(msg2);
 
 			},function errorCallback(response){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un adminstrador";
 				console.log("Error: "+response.status);
 				return;
 
@@ -328,38 +339,76 @@ angular.module('MainApp', ['ngStorage'])
 			.then(function successCallback(response){
 				var body = response.data;
 				// si usamos ctr solo hace falta la key
-				var keyHex = body.key;
+				var keyHex = body.key.key;
 
-				var encryptedBytes = aesjs.utils.hex.toBytes($scope.cipheredID);
-				var aesCtr = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(keyHex));
-				var decryptedBytes = aesCtr.decrypt(encryptedBytes);
-				var decryptedHex = aesjs.utils.hex.fromBytes(decryptedBytes);
+				// Verificar proof of publication
+				var PkpString = "TTP%A%B%"+keyHex;
+				var PkpHash = CryptoJS.SHA256(PkpString);
+				console.log("MyPkpHash: "+PkpHash);
+				$http.get('/ttp/keys')
+					.then(function successCallback(response){
+						if(response.status != 200){
+							$scope.showAlert = true;
+							$scope.alertText = "TTP no disponible, contacte con un administrador";
+							console.log("Can't get keys from ttp");
+							return;
+						}
+						var ttpPk = response.data;
+						var PkpBI = bigInt(body.Pkp, 16);
+						var unsignedTtpPkp = PkpBI.modPow(ttpPk.publicKey.e, ttpPk.publicKey.n);
+						if(unsignedTtpPkp.toString(16) == PkpHash){
+							console.log("Pkp verificada");
+						} else {
+							console.log("Pkp erronea");
+						}
 
-				// decryptedHex es la identidad cegada firmada por el censo
-				// lo descegamos
-				var nc = bigInt($scope.censoKeys.publicKey.n);
-				var r = bigInt($scope.r);
-				var dec_aid = bigInt(decryptedHex,16);
-				var identity_anonim =  dec_aid.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+						var encryptedBytes = aesjs.utils.hex.toBytes($scope.cipheredID);
+						var aesCtr = new aesjs.ModeOfOperation.ctr(aesjs.utils.hex.toBytes(keyHex));
+						var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+						var decryptedHex = aesjs.utils.hex.fromBytes(decryptedBytes);
+
+						// decryptedHex es la identidad cegada firmada por el censo
+						// lo descegamos
+						var nc = bigInt($scope.censoKeys.publicKey.n);
+						var r = bigInt($scope.r);
+						var dec_aid = bigInt(decryptedHex,16);
+						var identity_anonim =  dec_aid.multiply(r.modInv(nc)).mod(nc); // identity_anonim es la identidad firmada
+
+						// Comprobacion de que el proceso es correcto
+						var ec = bigInt($scope.censoKeys.publicKey.e);
+						var sinFirma = identity_anonim.modPow(ec, nc);
+						console.log("***************** Comprobacion de la firma ******************");
+
+						console.log("Clava publica usuario: "+$scope.userKeys.publicKey.n.toString(16));
+						console.log("Identidad recibida sin firmar: "+sinFirma.toString(16));
+
+						if(sinFirma.toString(16) == $scope.userKeys.publicKey.n.toString(16)) {
+							console.log("Identidad obtenida correctamente");
+							var now = new Date();
+							$scope.userinfo.user.identityGivenDate = now.getFullYear()+"/"+now.getMonth()+"/"+now.getDate();
+							$scope.fileID(identity_anonim.toString());
+							$scope.showAlert = false;
+						} else {
+							$scope.showAlert = true;
+							$scope.alertText = "La identidad obtenida no es válida, vuelvelo a intentar";
+							console.log("La identidad obtenida no es válida");
+						}
+
+					},function errorCallback(response){
+						if(response.status == 500){
+							console.log(response.data.message);
+						}
+						if(response.status == 404){
+							console.log('Error: ' + response.data.message);
+						}
+				})
 
 
-				// Comprobacion de que el proceso es correcto
-				var ec = bigInt($scope.censoKeys.publicKey.e);
-				var sinFirma = identity_anonim.modPow(ec, nc);
-				console.log("***************** Comprobacion de la firma ******************");
 
-				console.log("Clava publica usuario: "+$scope.userKeys.publicKey.n.toString(16));
-				console.log("Identidad recibida sin firmar: "+sinFirma.toString(16));
 
-				if(sinFirma.toString(16) == $scope.userKeys.publicKey.n.toString(16)) {
-					console.log("Identidad obtenida correctamente");
-					var now = new Date();
-					$scope.userinfo.user.identityGivenDate = now.getFullYear()+"/"+now.getMonth()+"/"+now.getDate();
-					$scope.fileID(identity_anonim.toString());
-				} else {
-					console.log("La identidad obtenida no es válida");
-				}
 			},function errorCallback(response){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un administrador";
 				console.log("Error: "+response.status);
 			})
 	}
@@ -393,6 +442,8 @@ angular.module('MainApp', ['ngStorage'])
 			}
 		},function errorCallback(response){
 			if(response.status == 500){
+				$scope.showAlert = true;
+				$scope.alertText = "Error del servidor, contacte con un administrador";
 				console.log(response.data.message);
 			}
 			if(response.status == 404){

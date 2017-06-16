@@ -24,6 +24,7 @@ mongoose.connect(config.db, function (err, res) {
 
     /* CREATING KEYS */
     keys.createKeys("censo");
+    keys.createKeys("ttp");
     //keys.createKeys("urna");
     //keys.createSecretSharing("melectoral");
     /*keys.createSecretSharing("melectoral",function(shared_keys){

@@ -8,6 +8,7 @@ const api = express.Router();
 
 api.post('/', keyCtrl.postKey);
 api.get('/', keyCtrl.getKey);
+api.get('/keys', keyCtrl.getTtpKeys);
 
 
 module.exports = api;

@@ -149,9 +149,19 @@ function toVote(req, res) {
                     if(verID.toString() == CpubKey_n.toString()){
                         console.log("ID VÁLIDA");
 
+                        console.log("Voto Firmado 16: "+ votoencrip_firmado.toString(16));
+                        console.log("Voto Firmado: "+ votoencrip_firmado.toString());
+
                         // VERIFICAR EL VOTO esta firmado por le usuario de la identidad anonima
-                        var voto_verify = bignum(votoencrip_firmado).powm(CpubKey_e, verID.toString());
+
+                        console.log("ID:"+verID.toString() );
+                        console.log("PUBLICK KEY E USER:"+CpubKey_e.toString());
+
+
+
+                        var voto_verify = bignum(votoencrip_firmado.toString()).powm(bignum(CpubKey_e.toString()), bignum(verID.toString()));
                         console.log("Verificacion del voto: "+ voto_verify.toString());
+                        console.log("VOTO ENCRIPTADO: "+ voto_verify.toString());
 
                         //VERIFICAR EL VOTO TIENE FORMATO CORRECTO Y NO ME LO HAN CAMBIADO
                         //VERIFICAR EL HASHHHHHH

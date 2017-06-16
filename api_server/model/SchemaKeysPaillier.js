@@ -14,7 +14,7 @@ const KeysPaillierSchema =  new schema({
     },
     privateKey: {
         lambda: String,
-        pubkey: String,
+        //pubkey: String,
         mu: String,
         u: String,
         publicKey: {
