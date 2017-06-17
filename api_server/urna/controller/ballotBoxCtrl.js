@@ -61,8 +61,9 @@ function encryptVotebyPaillier(vote) {
     var g = generateG(lambda, n);
     var mu = generateMu(lambda, g, n);
     var r = bignum.rand(0, n);
-    var cryptogram = bignum(g).pow(bignum(vote)).mul(bignum(r).pown(bignum(n), bignum(n).pow(2)));
 
+    //var cryptogram = bignum(g).pow(bignum(vote)).mul(bignum(r).pown(bignum(n), bignum(n).pow(2)));
+    var cryptogram = bignum(g).pow(bignum(vote)).mul(bignum(r).pow(bignum(n))).mod(bignum(n).pow(2));
 
     function calculateLambda(p, q) {
 
@@ -111,19 +112,19 @@ function toVote(req, res) {
     var CpubKey = req.body.CpubKey;
     console.log("CpubKey :" + CpubKey);
     var spl = CpubKey.split(".");
-    var CpubKey_e = bignum(spl[0],16);
-    console.log("E: "+CpubKey_e);
-    console.log("split:"+spl[1]);
+    var CpubKey_e = bignum(spl[0], 16);
+    console.log("E: " + CpubKey_e);
+    console.log("split:" + spl[1]);
     var CpubKey_n = bignum(spl[1], 16);
     console.log("CpubKey :" + CpubKey_n);
     var id_anonim = bignum(req.body.id_anonim);
     var CensoKey;
 
     console.log("Voto BD:");
-    console.log("Voto Encriptado y firmado: " +votoencrip_firmado);
-    console.log("HASH: "+Hash);
-    console.log("CLAVE PUBLICA: "+CpubKey);
-    console.log("ID_ANONIMA: "+id_anonim);
+    console.log("Voto Encriptado y firmado: " + votoencrip_firmado);
+    console.log("HASH: " + Hash);
+    console.log("CLAVE PUBLICA: " + CpubKey);
+    console.log("ID_ANONIMA: " + id_anonim);
     //buscamos en la Urna_Bd si el usuario ha votado
     BallotBox.findOne({id_anomin: id_anonim}, function (err, voto) {
         if (err) {
@@ -140,28 +141,27 @@ function toVote(req, res) {
                 }
                 else {
                     CensoKey = key.publicKey;
-                    console.log("CENSO KEYS: "+CensoKey);
+                    console.log("CENSO KEYS: " + CensoKey);
 
                     var verID = id_anonim.powm(bignum(CensoKey.e), bignum(CensoKey.n));
-                    console.log("ID: "+ verID);
-                    console.log("PubKey_n: "+ CpubKey_n);
-                    console.log(verID.toString() == CpubKey_n.toString());
-                    if(verID.toString() == CpubKey_n.toString()){
+                    console.log("ID: " + verID);
+                    console.log("PubKey_n: " + CpubKey_n);
+                    console.log(verID.toString() === CpubKey_n.toString());
+                    if (verID.toString() === CpubKey_n.toString()) {
                         console.log("ID VÁLIDA");
 
-                        console.log("Voto Firmado 16: "+ votoencrip_firmado.toString(16));
-                        console.log("Voto Firmado: "+ votoencrip_firmado.toString());
+                        console.log("Voto Firmado 16: " + votoencrip_firmado.toString(16));
+                        console.log("Voto Firmado: " + votoencrip_firmado.toString());
 
                         // VERIFICAR EL VOTO esta firmado por le usuario de la identidad anonima
 
-                        console.log("ID:"+verID.toString() );
-                        console.log("PUBLICK KEY E USER:"+CpubKey_e.toString());
-
+                        console.log("ID:" + verID.toString());
+                        console.log("PUBLICK KEY E USER:" + CpubKey_e.toString());
 
 
                         var voto_verify = bignum(votoencrip_firmado.toString()).powm(bignum(CpubKey_e.toString()), bignum(verID.toString()));
-                        console.log("Verificacion del voto: "+ voto_verify.toString());
-                        console.log("VOTO ENCRIPTADO: "+ voto_verify.toString());
+                        console.log("Verificacion del voto: " + voto_verify.toString());
+                        console.log("VOTO ENCRIPTADO: " + voto_verify.toString());
 
                         //VERIFICAR EL VOTO TIENE FORMATO CORRECTO Y NO ME LO HAN CAMBIADO
                         //VERIFICAR EL HASHHHHHH
@@ -169,35 +169,35 @@ function toVote(req, res) {
 
                         //GUARDAR EN LA BASE DE DATOS:
 
-                        var save_voto = new BallotBox ({
+                        var save_voto = new BallotBox({
                             voto: voto_verify.toString(), // VOTO ENCRIPTADO
                             id_anomin: id_anonim.toString(), //ID ANONIMA
                             //hash_voto: String,
-                            firma_voto : votoencrip_firmado.toString() // VOTO ENCRIPTADO Y FIRMADO CON LA PRIVADA DEL USER
+                            firma_voto: votoencrip_firmado.toString() // VOTO ENCRIPTADO Y FIRMADO CON LA PRIVADA DEL USER
                         });
 
                         save_voto.save(function (err) {
-                            if(err) {
+                            if (err) {
                                 console.log(err);
-                                return res.status(500).send({message:"Server error"});
+                                return res.status(500).send({message: "Server error"});
                             }
-                            return res.status(200).send({message:"VOTO EN LA URNA"});
+                            return res.status(200).send({message: "VOTO EN LA URNA"});
                         })
                         var num;
 
-                        BallotBox.find(function (err,ballotbox) {
-                            if(err){
-                                return res.status(500).send({message:"Server error"});
+                        BallotBox.find(function (err, ballotbox) {
+                            if (err) {
+                                return res.status(500).send({message: "Server error"});
                             }
-                            num = ballotbox.numOfVotes+1;
-                            BallotBox.update({numOfVotes: num },function (err) {
-                                if(err){
-                                    return res.status(500).send({message:"Server error"});
+                            num = ballotbox.numOfVotes + 1;
+                            BallotBox.update({numOfVotes: num}, function (err) {
+                                if (err) {
+                                    return res.status(500).send({message: "Server error"});
                                 }
                             });
                         });
                     }
-                    else{
+                    else {
                         return res.status(400).send({message: "ID Anónima no valida"});
 
                     }

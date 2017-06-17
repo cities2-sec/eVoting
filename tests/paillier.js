@@ -6,6 +6,9 @@ const rsa = require('../api_server/module/rsa');
 const KeysPaillier = require('../api_server/model/SchemaKeysPaillier');
 
 console.log("iniciando test");
+console.log("Cifrado Paillier OK");
+console.log("Recuento Paillier OK");
+console.log("Identidad anónima KO por desbordamiento bignum");
 //keys.createKeys("userTest");
 
 mongoose.connect(config.db, function (err, res) {
@@ -40,7 +43,7 @@ var start = function () {
                     //var censoPrivateKey = new rsa.privateKey(keyCenso.privateKey.p, keyCenso.privateKey.q, keyCenso.privateKey.d, keyCenso.privateKey.phi, publicKey);
 
                     //console.log(JSON.stringify(censoPrivateKey));
-                    var bnum = bignum(2);
+                    var bnum = bignum(cipher);
                     console.log(bnum.toString());
 
                      console.log("n: "+ keyCenso.publicKey.n);
@@ -55,13 +58,13 @@ var start = function () {
 
 
 
-                    //console.log("Public Key N: "+ keyCenso.publicKey.n);
+                    console.log("Public Key N: "+ keyCenso.publicKey.n);
                     var nBN = bignum(key.publicKey.n);
                     var id_anonima = nBN.powm(keyCenso.privateKey.d, keyCenso.publicKey.n);
                     console.log("ID Anonima: " + id_anonima);
                     var id_anonima_validad = id_anonima.powm(keyCenso.publicKey.e, keyCenso.publicKey.n);
                     console.log("ID Anonima validada: " + id_anonima_validad);
-                    if (nBN.toString(16) == id_anonima_validad.toString(16)) {
+                    if (nBN.toString(16) === id_anonima_validad.toString(16)) {
                         console.log("identidad anonima verificada");
 
 
@@ -73,7 +76,7 @@ var start = function () {
                                 var voto = 100; //1 100 10000
                                 var rand = generateR(keyMesa.publicKey.n);
 
-                                console.log(keyMesa.publicKey.n+"            "+keyMesa.publicKey.g)
+                                console.log(keyMesa.publicKey.n+"            "+keyMesa.publicKey.g);
 
                                 var voto_encriptado = bignum(111111111111111111111111111111);
 
@@ -108,14 +111,14 @@ var start = function () {
         }
 
     });
-}
+};
 
 var votar = function (keyMesa, id, voto_encriptado, voto_encriptado_firmado, public_n, public_e) {
 
     var voto_verify = voto_encriptado_firmado.powm(public_e, public_n);
     console.log(voto_encriptado_firmado+"                "+voto_verify)
 
-    if (voto_encriptado.toString() == voto_verify.toString()) {
+    if (voto_encriptado.toString() === voto_verify.toString()) {
 
         var votos = [voto_verify];
         countVotes(votos,1,keyMesa.publicKey.n,keyMesa.privateKey.mu,keyMesa.privateKey.lambda,3);
@@ -133,9 +136,13 @@ console.log("RESULTADO VOTO c_i:" + cipher);
 function encryptPubkeyPaillier(m, r, n, g) {
     console.log("m: " + m);
     var n2 = bignum(n).pow(2);
+    console.log("N^2:" + n2.toString());
+    console.log("R: " + r.toString());
+    console.log("N: " + n.toString());
+    console.log("G: " + g.toString());
 
     // return    (bigInt(g).modPow(m, n2)).multiply(r.modPow(n, n2)).mod(n2);
-    return (bignum(g).mod(bignum(m))).mul(bignum(r).powm(bignum(n), bignum(n2)));
+    return bignum(g).pow(m).mul(bignum(r).pow(bignum(n))).mod(bignum(n2));
 }
 function generateR(n) {
     var r;
@@ -143,9 +150,13 @@ function generateR(n) {
     {
         r = bignum.rand(n);
     }
-    while (bignum(r).cmp(n) >= 0 || bignum.gcd(r, bignum(n).pow(2)) != 1);
+    while (bignum(r).cmp(n) >= 0 || bignum.gcd(r, bignum(n).pow(2)) !== 1);
     return r;
 }
+
+var resultado = countVotes ([cipher,80933260], 2, 126869, 53022, 31536, 5);
+console.log ("RESULTADOS:");
+console.log(resultado);
 
 function countVotes(votos, nvotos, n, mu, lambda, npartidos) {
     /*
